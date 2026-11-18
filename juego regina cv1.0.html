@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Regina's Tech Bakery | CV Interactivo - Regina Gutiérrez Flores</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka (playful rounded headings) & Inter (clean readable body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            vanilla: '#FFF9F2',
+            cream: '#F7EDE2',
+            strawberry: '#FF6B8B',
+            strawberryDark: '#E85072',
+            mint: '#38B2AC',
+            mintLight: '#E6FFFA',
+            caramel: '#F6AD55',
+            caramelLight: '#FEF3C7',
+            espresso: '#2D232E',
+            cocoa: '#5C4B51'
+          },
+          fontFamily: {
+            display: ['Fredoka', 'sans-serif'],
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Base styling and mobile touch optimizations */
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #FFF9F2;
+      color: #2D232E;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+    }
+
+    h1, h2, h3, .font-display {
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    /* Game Canvas responsive fill */
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      cursor: pointer;
+    }
+
+    /* Minimum 44px touch target helper for mobile & tablet usability */
+    .touch-target {
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    /* Subtle animations for cards and feedback */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 2.6s ease-in-out infinite;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-4px); }
+    }
+    .animate-shake {
+      animation: shake 0.35s ease-in-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Memory Flip Card 3D styles */
+    .flip-card {
+      perspective: 800px;
+      min-height: 84px;
+      height: 84px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.45s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner,
+    .flip-card.matched .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      text-align: center;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Custom clean scrollbar inside modals */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #F7EDE2;
+      border-radius: 999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #F6AD55;
+      border-radius: 999px;
+    }
+
+    /* Print rules for Quick CV Executive View */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #quickCVPrintable, #quickCVPrintable * {
+        visibility: visible;
+      }
+      #quickCVPrintable {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        overflow: visible !important;
+        background: white !important;
+        padding: 16px !important;
+        box-shadow: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="flex flex-col h-[100dvh] w-screen overflow-hidden bg-vanilla text-espresso">
+
+  <!-- ==================== TOP HUD HEADER ==================== -->
+  <header class="w-full bg-white/95 backdrop-blur-md border-b-2 border-caramel/30 px-3 py-2 sm:px-5 sm:py-2.5 shadow-sm z-30 shrink-0">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <!-- Brand Title -->
+      <div class="flex items-center gap-2">
+        <span class="text-2xl sm:text-3xl">🧁</span>
+        <div>
+          <h1 class="font-display text-base sm:text-xl font-bold text-espresso leading-tight">
+            Regina's Tech Bakery <span class="text-strawberry hidden md:inline">— CV Interactivo</span>
+          </h1>
+          <p class="text-[11px] text-cocoa hidden sm:block leading-none">
+            Regina Gutiérrez Flores • Ing. en Sistemas Computacionales y Electrónicos
+          </p>
+        </div>
+      </div>
+
+      <!-- 5-Slot Ingredient Progress Bar -->
+      <div id="ingredientBar" class="flex items-center gap-1 sm:gap-1.5 bg-vanilla px-2 py-1 rounded-2xl border border-caramel/40 order-3 lg:order-2 w-full lg:w-auto justify-center">
+        <button type="button" onclick="window.inspectCollectedIngredient(0)" id="slot-0" class="flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold transition-all bg-white/60 text-cocoa/60 border border-dashed border-cocoa/25" title="Paso 1: Harina (Educación)">
+          <span>🌾</span><span class="hidden sm:inline">Harina</span>
+        </button>
+        <button type="button" onclick="window.inspectCollectedIngredient(1)" id="slot-1" class="flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold transition-all bg-white/60 text-cocoa/60 border border-dashed border-cocoa/25" title="Paso 2: Huevos (Experiencia)">
+          <span>🥚</span><span class="hidden sm:inline">Huevos</span>
+        </button>
+        <button type="button" onclick="window.inspectCollectedIngredient(2)" id="slot-2" class="flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold transition-all bg-white/60 text-cocoa/60 border border-dashed border-cocoa/25" title="Paso 3: Azúcar (Proyectos)">
+          <span>🍯</span><span class="hidden sm:inline">Azúcar</span>
+        </button>
+        <button type="button" onclick="window.inspectCollectedIngredient(3)" id="slot-3" class="flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold transition-all bg-white/60 text-cocoa/60 border border-dashed border-cocoa/25" title="Paso 4: Leche (Skills & TOEFL)">
+          <span>🧈</span><span class="hidden sm:inline">Leche</span>
+        </button>
+        <button type="button" onclick="window.inspectCollectedIngredient(4)" id="slot-4" class="flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold transition-all bg-white/60 text-cocoa/60 border border-dashed border-cocoa/25" title="Paso 5: Cereza (Certificaciones)">
+          <span>🍒</span><span class="hidden sm:inline">Cereza</span>
+        </button>
+      </div>
+
+      <!-- Top Action Controls: Music & Quick CV -->
+      <div class="flex items-center gap-1.5 sm:gap-2 order-2 lg:order-3">
+        <button
+          id="musicToggleBtn"
+          type="button"
+          onclick="window.toggleMusic()"
+          class="touch-target px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-caramelLight hover:bg-caramel/30 text-espresso border border-caramel/50 transition-all active:scale-95 flex items-center gap-1.5 shadow-sm"
+        >
+          <span>🎵</span>
+          <span id="musicStatusText">Música: OFF</span>
+        </button>
+
+        <button
+          type="button"
+          onclick="window.toggleQuickCV(true)"
+          class="touch-target px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-mint hover:bg-teal-600 text-white transition-all active:scale-95 flex items-center gap-1.5 shadow-sm"
+        >
+          <span>📄</span>
+          <span>Vista Rápida CV</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN 2D GAME STAGE ==================== -->
+  <main class="relative flex-1 w-full h-full overflow-hidden">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Floating Hint Pill (Top-Center) -->
+    <div id="hudHintBanner" class="hidden pointer-events-none absolute top-2.5 sm:top-3 left-1/2 -translate-x-1/2 z-10 bg-white/95 backdrop-blur-sm border-2 border-strawberry/40 px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-2 text-xs sm:text-sm font-semibold text-espresso max-w-[94vw] truncate">
+      <span id="hudHintIcon" class="text-base shrink-0">🌾</span>
+      <span id="hudHintText" class="truncate">Paso 1/5: Camina o toca la Harina</span>
+    </div>
+
+    <!-- Mobile & Tablet Arcade Touch Controls (Responsive Bottom Bar) -->
+    <div id="mobileControls" class="hidden fixed bottom-3 inset-x-3 sm:inset-x-6 z-20 flex items-end justify-between pointer-events-none select-none">
+      <!-- Left D-Pad Cluster (48px+ ergonomic buttons) -->
+      <div class="pointer-events-auto flex flex-col items-center gap-1.5 bg-white/80 backdrop-blur-md p-2 rounded-3xl border-2 border-caramel/50 shadow-lg">
+        <button type="button" aria-label="Subir" onpointerdown="window.setDpad('up', true)" onpointerup="window.setDpad('up', false)" onpointerleave="window.setDpad('up', false)" onpointercancel="window.setDpad('up', false)" class="w-12 h-12 rounded-2xl bg-vanilla border-2 border-caramel shadow-sm flex items-center justify-center text-lg font-bold active:bg-caramelLight active:scale-95">▲</button>
+        <div class="flex items-center gap-1.5">
+          <button type="button" aria-label="Izquierda" onpointerdown="window.setDpad('left', true)" onpointerup="window.setDpad('left', false)" onpointerleave="window.setDpad('left', false)" onpointercancel="window.setDpad('left', false)" class="w-12 h-12 rounded-2xl bg-vanilla border-2 border-caramel shadow-sm flex items-center justify-center text-lg font-bold active:bg-caramelLight active:scale-95">◀</button>
+          <button type="button" aria-label="Bajar" onpointerdown="window.setDpad('down', true)" onpointerup="window.setDpad('down', false)" onpointerleave="window.setDpad('down', false)" onpointercancel="window.setDpad('down', false)" class="w-12 h-12 rounded-2xl bg-vanilla border-2 border-caramel shadow-sm flex items-center justify-center text-lg font-bold active:bg-caramelLight active:scale-95">▼</button>
+          <button type="button" aria-label="Derecha" onpointerdown="window.setDpad('right', true)" onpointerup="window.setDpad('right', false)" onpointerleave="window.setDpad('right', false)" onpointercancel="window.setDpad('right', false)" class="w-12 h-12 rounded-2xl bg-vanilla border-2 border-caramel shadow-sm flex items-center justify-center text-lg font-bold active:bg-caramelLight active:scale-95">▶</button>
+        </div>
+      </div>
+
+      <!-- Right Action / Interact Arcade Button -->
+      <div class="pointer-events-auto bg-white/80 backdrop-blur-md p-2 rounded-3xl border-2 border-strawberry/40 shadow-lg">
+        <button type="button" onpointerdown="window.triggerInteract()" class="min-w-[84px] h-14 px-4 rounded-2xl bg-gradient-to-b from-strawberry to-strawberryDark text-white border-2 border-strawberryDark shadow-md flex flex-col items-center justify-center active:scale-95">
+          <span class="text-base leading-none">✨</span>
+          <span class="text-xs font-display font-bold tracking-wide mt-0.5">Abrir</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== WELCOME OVERLAY ==================== -->
+    <div id="welcomeOverlay" class="absolute inset-0 z-30 bg-espresso/45 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+      <div class="bg-vanilla border-4 border-caramel rounded-3xl max-w-lg w-full max-h-[90dvh] overflow-y-auto custom-scroll p-5 sm:p-8 shadow-2xl text-center animate-pop relative">
+        <!-- Decorative top ribbon -->
+        <div class="inline-flex items-center gap-2 bg-strawberry/15 text-strawberryDark px-4 py-1 rounded-full text-xs sm:text-sm font-bold mb-3">
+          <span>👩‍🍳 Portafolio Interactivo</span>
+          <span>•</span>
+          <span>Edición Repostería Tech</span>
+        </div>
+
+        <div class="text-5xl sm:text-6xl mb-3 animate-float">🧁✨</div>
+
+        <h2 class="font-display text-2xl sm:text-3xl font-bold text-espresso mb-1">
+          ¡Bienvenido a Regina's Tech Bakery!
+        </h2>
+        <p class="text-sm sm:text-base font-semibold text-mint mb-4">
+          Regina Gutiérrez Flores • Ing. en Sistemas Computacionales y Electrónicos
+        </p>
+
+        <p class="text-sm sm:text-base text-cocoa leading-relaxed mb-5 bg-white/80 p-4 rounded-2xl border border-caramel/30">
+          Recolecta los <strong>5 ingredientes</strong> en la cocina tecnológica, supera cada minijuego para desbloquear mi CV y hornea el pastel final.
+        </p>
+
+        <div class="grid grid-cols-3 gap-2 text-xs text-cocoa mb-5 sm:mb-6">
+          <div class="bg-white p-2.5 rounded-xl border border-caramel/25">
+            <div class="text-lg mb-0.5">📱 / 💻</div>
+            <div class="font-semibold">Táctil, Clic o Teclado</div>
+          </div>
+          <div class="bg-white p-2.5 rounded-xl border border-caramel/25">
+            <div class="text-lg mb-0.5">🎮</div>
+            <div class="font-semibold">5 Retos Únicos</div>
+          </div>
+          <div class="bg-white p-2.5 rounded-xl border border-caramel/25">
+            <div class="text-lg mb-0.5">🎂</div>
+            <div class="font-semibold">Pastel Sorpresa</div>
+          </div>
+        </div>
+
+        <button
+          id="startGameBtn"
+          type="button"
+          onclick="window.startGame()"
+          class="touch-target w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-strawberry to-strawberryDark hover:brightness-105 text-white font-display text-lg sm:text-xl font-bold shadow-lg shadow-strawberry/30 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+        >
+          👩‍🍳 ¡Empezar a Hornear!
+        </button>
+
+        <p class="text-xs text-cocoa/80 mt-3">
+          ¿Con poco tiempo? Usa <strong>"📄 Vista Rápida CV"</strong> arriba en cualquier momento.
+        </p>
+      </div>
+    </div>
+
+    <!-- ==================== STATION / MINI-GAME MODAL ==================== -->
+    <div id="stationModal" class="hidden fixed inset-0 z-40 bg-espresso/55 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-5">
+      <div class="bg-vanilla border-4 border-caramel rounded-3xl max-w-4xl w-full max-h-[90dvh] flex flex-col shadow-2xl animate-pop overflow-hidden">
+        <!-- Modal Header -->
+        <div class="bg-white px-4 py-3 sm:px-5 sm:py-3.5 border-b-2 border-caramel/30 flex items-center justify-between gap-2 shrink-0">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="modalIcon" class="text-2xl sm:text-3xl shrink-0">🌾</span>
+            <div class="min-w-0">
+              <span id="modalStepTag" class="text-[11px] font-bold uppercase tracking-wider text-strawberry block">Ingrediente 1 de 5</span>
+              <h3 id="modalTitle" class="font-display text-base sm:text-2xl font-bold text-espresso leading-tight truncate">
+                Harina — Perfil & Educación
+              </h3>
+            </div>
+          </div>
+          <button
+            type="button"
+            onclick="window.closeModal()"
+            class="touch-target w-11 h-11 rounded-xl bg-cream hover:bg-strawberry/20 text-espresso font-bold flex items-center justify-center transition-colors shrink-0"
+            title="Cerrar ventana"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Modal Body: Two-Column Responsive Layout (Left: CV Info, Right: Mini-Game) -->
+        <div class="p-3.5 sm:p-6 overflow-y-auto custom-scroll grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 flex-1">
+          <!-- Left Column: Unlocked CV Section -->
+          <div id="modalCVContent" class="lg:col-span-6 bg-white rounded-2xl p-4 sm:p-5 border-2 border-mint/30 shadow-sm flex flex-col justify-between">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Right Column: Interactive Mini-Game -->
+          <div class="lg:col-span-6 bg-cream/70 rounded-2xl p-4 sm:p-5 border-2 border-caramel/40 flex flex-col justify-between">
+            <div id="modalGameContent">
+              <!-- Populated dynamically -->
+            </div>
+
+            <!-- Unlock Ingredient Button (Disabled until mini-game solved) -->
+            <div class="mt-4 pt-3 border-t border-caramel/30">
+              <button
+                id="collectIngredientBtn"
+                type="button"
+                disabled
+                onclick="window.collectCurrentIngredient()"
+                class="touch-target w-full py-3 px-4 rounded-2xl font-display text-base sm:text-lg font-bold transition-all flex items-center justify-center gap-2 bg-gray-300 text-gray-500 cursor-not-allowed"
+              >
+                <span id="collectBtnText">🔒 Completa el minijuego para recoger</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== GRAN FINALE MODAL ==================== -->
+    <div id="finaleModal" class="hidden fixed inset-0 z-50 bg-espresso/65 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+      <div class="bg-vanilla border-4 border-strawberry rounded-3xl max-w-xl w-full max-h-[90dvh] overflow-y-auto custom-scroll p-5 sm:p-8 shadow-2xl text-center animate-pop relative">
+        <!-- Celebratory Cake SVG Illustration -->
+        <div class="mx-auto w-32 h-32 sm:w-36 sm:h-36 mb-2.5 animate-float">
+          <svg viewBox="0 0 160 160" class="w-full h-full drop-shadow-md">
+            <!-- Plate -->
+            <ellipse cx="80" cy="142" rx="68" ry="12" fill="#E2E8F0" />
+            <ellipse cx="80" cy="139" rx="60" ry="9" fill="#FFFFFF" />
+            <!-- Bottom Cake Tier -->
+            <rect x="30" y="96" width="100" height="40" rx="12" fill="#FF6B8B" />
+            <path d="M30 106 Q42 118 55 106 Q68 118 80 106 Q92 118 105 106 Q118 118 130 106 L130 96 L30 96 Z" fill="#FFF9F2" />
+            <!-- Top Cake Tier -->
+            <rect x="46" y="60" width="68" height="36" rx="10" fill="#38B2AC" />
+            <path d="M46 70 Q57 80 68 70 Q80 80 92 70 Q103 80 114 70 L114 60 L46 60 Z" fill="#FFF9F2" />
+            <!-- Candle & Flame -->
+            <rect x="76" y="34" width="8" height="26" rx="3" fill="#F6AD55" />
+            <path d="M80 16 C86 24 86 31 80 34 C74 31 74 24 80 16 Z" fill="#FF6B8B" />
+            <circle cx="80" cy="27" r="2.5" fill="#FEF3C7" />
+            <!-- Cherries / Berries -->
+            <circle cx="56" cy="57" r="6" fill="#E85072" />
+            <circle cx="104" cy="57" r="6" fill="#E85072" />
+            <circle cx="40" cy="93" r="6" fill="#F6AD55" />
+            <circle cx="120" cy="93" r="6" fill="#F6AD55" />
+            <!-- Sparkles -->
+            <text x="16" y="46" font-size="16">✨</text>
+            <text x="128" y="48" font-size="16">✨</text>
+          </svg>
+        </div>
+
+        <span class="inline-block bg-mint/15 text-mint font-bold text-xs px-3.5 py-1 rounded-full mb-2">
+          🎂 ¡Pastel Horneado al 100%! • 5/5 Ingredientes
+        </span>
+
+        <h2 class="font-display text-2xl sm:text-4xl font-bold text-espresso mb-3">
+          ¡Pastel Terminado!
+        </h2>
+
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border-2 border-caramel/40 text-left mb-5 shadow-sm">
+          <p class="text-sm sm:text-base text-espresso leading-relaxed">
+            "¡Muchas gracias por tu tiempo y por tomarte el momento de conocer mi trayectoria de una forma tan dinámica! Me encantaría tener la oportunidad de conversar con ustedes, aportar mi creatividad, entusiasmo y formación en ingeniería a su increíble equipo, y seguir construyendo grandes proyectos juntos. ¡Espero escuchar de ustedes muy pronto!"
+          </p>
+          <p class="mt-3 font-display font-bold text-strawberry text-right text-sm sm:text-base">
+            — Regina Gutiérrez Flores 👩‍💻🧁
+          </p>
+        </div>
+
+        <!-- Primary Replay Button + Copy Email + Executive CV -->
+        <div class="space-y-2.5">
+          <button
+            type="button"
+            onclick="window.resetGame()"
+            class="touch-target w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-strawberry to-strawberryDark hover:brightness-105 text-white font-display text-lg sm:text-xl font-bold shadow-lg shadow-strawberry/30 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>🔄</span>
+            <span>Volver a Jugar</span>
+          </button>
+
+          <button
+            id="copyEmailBtn"
+            type="button"
+            onclick="window.copyEmail()"
+            class="touch-target w-full py-3 px-5 rounded-2xl bg-mint hover:bg-teal-600 text-white font-display text-sm sm:text-base font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
+          >
+            <span id="copyEmailIcon">📋</span>
+            <span id="copyEmailLabel">Copiar Correo: reginagtzzf@gmail.com</span>
+          </button>
+
+          <button
+            type="button"
+            onclick="window.closeFinaleAndOpenCV()"
+            class="touch-target w-full py-3 px-4 rounded-2xl bg-caramelLight hover:bg-caramel/35 text-espresso border border-caramel font-semibold text-sm transition-all active:scale-95"
+          >
+            📄 Ver / Imprimir CV Completo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== QUICK EXECUTIVE CV MODAL ==================== -->
+    <div id="quickCVModal" class="hidden fixed inset-0 z-50 bg-espresso/60 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-5">
+      <div id="quickCVPrintable" class="bg-white border-4 border-mint rounded-3xl max-w-4xl w-full max-h-[90dvh] overflow-y-auto custom-scroll p-5 sm:p-8 shadow-2xl animate-pop">
+        <!-- Header Bar -->
+        <div class="flex flex-wrap items-start justify-between gap-4 border-b-2 border-cream pb-4 mb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-mint">Currículum Vitae Ejecutivo</span>
+            <h2 class="font-display text-2xl sm:text-3xl font-bold text-espresso">
+              Regina Gutiérrez Flores
+            </h2>
+            <p class="text-sm font-medium text-cocoa mt-0.5">
+              Ingeniería en Sistemas Computacionales y Electrónicos • Tampico, México
+            </p>
+            <p class="text-sm font-semibold text-strawberry mt-1">
+              ✉️ reginagtzzf@gmail.com
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2 no-print">
+            <button
+              type="button"
+              onclick="window.copyEmailQuick()"
+              id="quickCopyBtn"
+              class="px-3 py-2 rounded-xl bg-caramelLight hover:bg-caramel/30 text-espresso text-xs sm:text-sm font-semibold border border-caramel/40 transition-all"
+            >
+              📋 Copiar Correo
+            </button>
+            <button
+              type="button"
+              onclick="window.printQuickCV()"
+              class="px-3.5 py-2 rounded-xl bg-mint hover:bg-teal-600 text-white text-xs sm:text-sm font-semibold shadow-sm transition-all"
+            >
+              🖨️ Imprimir / Guardar PDF
+            </button>
+            <button
+              type="button"
+              onclick="window.toggleQuickCV(false)"
+              class="w-9 h-9 rounded-xl bg-cream hover:bg-strawberry/20 text-espresso font-bold flex items-center justify-center"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Profile Summary -->
+        <section class="mb-5 bg-vanilla p-4 rounded-2xl border border-caramel/30">
+          <h3 class="font-display text-base font-bold text-espresso mb-1">👩‍💻 Perfil Profesional</h3>
+          <p class="text-sm text-cocoa leading-relaxed">
+            Estudiante con experiencia en desarrollo de aplicaciones web, gestión de proyectos y aprendizaje automático. Apasionada por la innovación tecnológica, con habilidades sólidas en programación, administración de bases de datos y diseño 3D.
+          </p>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Left Column -->
+          <div class="space-y-5">
+            <!-- Education -->
+            <section>
+              <h3 class="font-display text-base font-bold text-strawberry border-b border-cream pb-1 mb-2.5">
+                🎓 Educación
+              </h3>
+              <div class="space-y-3 text-sm">
+                <div>
+                  <div class="font-bold text-espresso">Ingeniería en Sistemas Computacionales y Electrónicos</div>
+                  <div class="text-cocoa">Universidad del Noreste • <span class="font-bold text-mint">Promedio: 9.7</span></div>
+                </div>
+                <div>
+                  <div class="font-bold text-espresso">Preparatoria</div>
+                  <div class="text-cocoa">Escuela Americana de Tampico • <span class="font-bold text-mint">Promedio: 9.5</span></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Work Experience -->
+            <section>
+              <h3 class="font-display text-base font-bold text-strawberry border-b border-cream pb-1 mb-2.5">
+                💼 Experiencia Laboral
+              </h3>
+              <div class="space-y-3 text-sm">
+                <div>
+                  <div class="font-bold text-espresso">Asesor de Ventas y Administración</div>
+                  <div class="text-xs font-semibold text-mint">Arantza Joyas | Tampico, México (2024 – 2025)</div>
+                  <ul class="list-disc list-inside text-cocoa text-xs mt-1 space-y-0.5">
+                    <li>Impulsé ventas de alto valor mediante atención personalizada y asesoría en joyería fina.</li>
+                    <li>Gestioné facturación, administración de ventas y seguimiento contable.</li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="font-bold text-espresso">Profesora de Inglés (Secundaria / 6.º a 8.º grado)</div>
+                  <div class="text-xs font-semibold text-mint">TEC Tampico | Tampico, México (2024 – 2025)</div>
+                  <ul class="list-disc list-inside text-cocoa text-xs mt-1 space-y-0.5">
+                    <li>Impartí clases enfocadas en fortalecer la expresión y confianza comunicativa.</li>
+                    <li>Diseñé métodos de enseñanza prácticos y accesibles.</li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="font-bold text-espresso">Auxiliar Administrativo</div>
+                  <div class="text-xs font-semibold text-mint">Grupo Garel | Tampico, México (Veranos 2021 – 2022)</div>
+                  <ul class="list-disc list-inside text-cocoa text-xs mt-1 space-y-0.5">
+                    <li>Administré y clasifiqué facturas y documentación financiera cronológicamente.</li>
+                    <li>Consolidé montos totales mensuales para facilitar el control administrativo.</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <!-- Projects & Leadership -->
+            <section>
+              <h3 class="font-display text-base font-bold text-strawberry border-b border-cream pb-1 mb-2.5">
+                🚀 Proyectos Tech & Liderazgo
+              </h3>
+              <ul class="text-xs text-cocoa space-y-1.5">
+                <li><strong>Sensor de Humedad y Vibración (Azure y Broker):</strong> Monitoreo IoT conectado a la nube.</li>
+                <li><strong>Sistema de Calificaciones:</strong> Plataforma estructurada para gestión académica.</li>
+                <li><strong>Secretaria de National Honor Society (2024):</strong> Miembro activo (2022–2024) y mesa directiva organizando proyectos de servicio y liderazgo.</li>
+                <li><strong>Tutorías de Electrónica UNE:</strong> Miércoles 2:00 – 4:00 pm.</li>
+              </ul>
+            </section>
+          </div>
+
+          <!-- Right Column -->
+          <div class="space-y-5">
+            <!-- TOEFL Score -->
+            <section class="bg-vanilla p-4 rounded-2xl border border-caramel/30">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-display text-base font-bold text-espresso">🌎 Idioma: Inglés TOEFL iBT</h3>
+                <span class="px-2.5 py-0.5 rounded-full bg-mint text-white font-bold text-xs">102 / 120</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-white p-2 rounded-xl border border-cream">
+                  <div class="flex justify-between font-semibold"><span>Reading</span><span>24/30</span></div>
+                  <div class="w-full bg-cream h-1.5 rounded-full mt-1"><div class="bg-strawberry h-1.5 rounded-full" style="width:80%"></div></div>
+                </div>
+                <div class="bg-white p-2 rounded-xl border border-cream">
+                  <div class="flex justify-between font-semibold"><span>Listening</span><span>30/30</span></div>
+                  <div class="w-full bg-cream h-1.5 rounded-full mt-1"><div class="bg-mint h-1.5 rounded-full" style="width:100%"></div></div>
+                </div>
+                <div class="bg-white p-2 rounded-xl border border-cream">
+                  <div class="flex justify-between font-semibold"><span>Speaking</span><span>22/30</span></div>
+                  <div class="w-full bg-cream h-1.5 rounded-full mt-1"><div class="bg-caramel h-1.5 rounded-full" style="width:73%"></div></div>
+                </div>
+                <div class="bg-white p-2 rounded-xl border border-cream">
+                  <div class="flex justify-between font-semibold"><span>Writing</span><span>26/30</span></div>
+                  <div class="w-full bg-cream h-1.5 rounded-full mt-1"><div class="bg-mint h-1.5 rounded-full" style="width:87%"></div></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Tech Stack & Soft Skills -->
+            <section>
+              <h3 class="font-display text-base font-bold text-strawberry border-b border-cream pb-1 mb-2.5">
+                💻 Herramientas, Lenguajes & Competencias
+              </h3>
+              <div class="flex flex-wrap gap-1.5 mb-3">
+                <span class="px-2.5 py-1 rounded-lg bg-mintLight text-mint font-semibold text-xs">Python</span>
+                <span class="px-2.5 py-1 rounded-lg bg-mintLight text-mint font-semibold text-xs">JavaScript</span>
+                <span class="px-2.5 py-1 rounded-lg bg-mintLight text-mint font-semibold text-xs">SQL</span>
+                <span class="px-2.5 py-1 rounded-lg bg-mintLight text-mint font-semibold text-xs">SolidWorks</span>
+                <span class="px-2.5 py-1 rounded-lg bg-mintLight text-mint font-semibold text-xs">Java</span>
+                <span class="px-2.5 py-1 rounded-lg bg-mintLight text-mint font-semibold text-xs">C#</span>
+              </div>
+              <p class="text-xs text-cocoa leading-relaxed">
+                <strong>Competencias:</strong> Pensamiento analítico, trabajo en equipo, comunicación, efectividad, responsabilidad.<br />
+                <strong>Intereses:</strong> Administración de Bases de Datos, Diseño de Páginas Web.
+              </p>
+            </section>
+
+            <!-- Certifications & Awards -->
+            <section>
+              <h3 class="font-display text-base font-bold text-strawberry border-b border-cream pb-1 mb-2.5">
+                🏅 Certificaciones & Premios
+              </h3>
+              <ul class="text-xs text-cocoa space-y-1.5">
+                <li><strong>DataCamp:</strong> Writing Functions and Stored Procedures in SQL Server, Joining Data in SQL, Database Design, Intermediate SQL <em>(En progreso: Cybersecurity)</em>.</li>
+                <li><strong>Santander Open Academy:</strong> Introduction to Data Science.</li>
+                <li><strong>AP Scholar Award:</strong> Passed 3 AP Exams.</li>
+                <li><strong>ATSMUN Tampico:</strong> Outstanding Delegate Award & Best Position Paper Award.</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== GAME & AUDIO ENGINE SCRIPT ==================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* =====================================================================
+         1. GAME STATE & CURRICULUM DATA
+         ===================================================================== */
+      const INGREDIENTS = [
+        {
+          id: 0,
+          key: 'harina',
+          name: 'Harina',
+          fullName: 'Ingrediente 1: Harina — Perfil & Educación',
+          icon: '🌾',
+          gameType: 'word_match',
+          rx: 0.22,
+          ry: 0.34,
+          color: '#F6AD55'
+        },
+        {
+          id: 1,
+          key: 'huevos',
+          name: 'Huevos',
+          fullName: 'Ingrediente 2: Huevos — Experiencia Laboral',
+          icon: '🥚',
+          gameType: 'wordle',
+          rx: 0.48,
+          ry: 0.28,
+          color: '#FF6B8B'
+        },
+        {
+          id: 2,
+          key: 'azucar',
+          name: 'Azúcar',
+          fullName: 'Ingrediente 3: Azúcar y Esencia — Proyectos Tech & Liderazgo',
+          icon: '🍯',
+          gameType: 'fill_blanks',
+          rx: 0.72,
+          ry: 0.36,
+          color: '#38B2AC'
+        },
+        {
+          id: 3,
+          key: 'leche',
+          name: 'Leche',
+          fullName: 'Ingrediente 4: Leche y Mantequilla — Idiomas & Stack Tech',
+          icon: '🧈',
+          gameType: 'lightning_quiz',
+          rx: 0.28,
+          ry: 0.72,
+          color: '#F6AD55'
+        },
+        {
+          id: 4,
+          key: 'cereza',
+          name: 'Cereza',
+          fullName: 'Ingrediente 5: Cereza y Decoración — Certificaciones y Premios',
+          icon: '🍒',
+          gameType: 'memory_flip',
+          rx: 0.56,
+          ry: 0.74,
+          color: '#E85072'
+        }
+      ];
+
+      const OVEN_POS = { rx: 0.85, ry: 0.62 };
+
+      const state = {
+        started: false,
+        loopRunning: false,
+        currentStep: 0, // 0..4 for ingredients, 5 = ready for oven, 6 = baked!
+        collected: [false, false, false, false, false],
+        activeModalIndex: null,
+        minigameSolved: false,
+        bakingAnimTime: 0,
+        isBaking: false,
+        confetti: [],
+        // Player avatar position in normalized coordinates (0..1)
+        player: {
+          x: 0.14,
+          y: 0.56,
+          targetX: null,
+          targetY: null,
+          autoOpenOnArrive: false,
+          pendingReviewIdx: null,
+          facing: 1, // 1 = right, -1 = left
+          walkCycle: 0
+        },
+        keys: {
+          up: false,
+          down: false,
+          left: false,
+          right: false
+        },
+        dpad: {
+          up: false,
+          down: false,
+          left: false,
+          right: false
+        }
+      };
+
+      /* =====================================================================
+         2. PROCEDURAL WEB AUDIO ENGINE (CALM & CHEERFUL CAFE / LO-FI LOOP)
+         ===================================================================== */
+      const audioEngine = {
+        ctx: null,
+        isPlaying: false,
+        timerId: null,
+        stepIndex: 0,
+
+        init: function () {
+          try {
+            if (!this.ctx) {
+              const AudioCtx = window.AudioContext || window.webkitAudioContext;
+              if (AudioCtx) {
+                this.ctx = new AudioCtx();
+              }
+            }
+            if (this.ctx && this.ctx.state === 'suspended') {
+              this.ctx.resume();
+            }
+          } catch (e) {
+            console.warn('Web Audio API no disponible:', e);
+          }
+        },
+
+        playTone: function (freq, duration, type, volume, delay) {
+          try {
+            if (!this.ctx || !this.isPlaying) return;
+            const now = this.ctx.currentTime + (delay || 0);
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const filter = this.ctx.createBiquadFilter();
+
+            osc.type = type || 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(950, now);
+
+            gain.gain.setValueAtTime(0.0001, now);
+            gain.gain.linearRampToValueAtTime(volume || 0.04, now + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start(now);
+            osc.stop(now + duration + 0.05);
+          } catch (e) {
+            // Ignore audio errors gracefully
+          }
+        },
+
+        playSfx: function (kind) {
+          try {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+
+            if (kind === 'click') {
+              osc.frequency.setValueAtTime(523.25, now);
+              osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.08);
+              gain.gain.setValueAtTime(0.05, now);
+              gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+            } else if (kind === 'match') {
+              osc.frequency.setValueAtTime(587.33, now);
+              osc.frequency.setValueAtTime(783.99, now + 0.09);
+              gain.gain.setValueAtTime(0.07, now);
+              gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.24);
+            } else if (kind === 'collect') {
+              osc.frequency.setValueAtTime(523.25, now);
+              osc.frequency.setValueAtTime(659.25, now + 0.08);
+              osc.frequency.setValueAtTime(783.99, now + 0.16);
+              osc.frequency.setValueAtTime(1046.5, now + 0.24);
+              gain.gain.setValueAtTime(0.08, now);
+              gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+            } else if (kind === 'error') {
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(240, now);
+              osc.frequency.linearRampToValueAtTime(195, now + 0.16);
+              gain.gain.setValueAtTime(0.05, now);
+              gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+            }
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.5);
+          } catch (e) {
+            // Silent fallback
+          }
+        },
+
+        startMusic: function () {
+          try {
+            this.init();
+            if (this.isPlaying) return;
+            this.isPlaying = true;
+            this.updateButtonUI();
+
+            // Gentle, warm major-7th lo-fi/cafe progression at ~92 BPM (652ms per beat)
+            const chords = [
+              [174.61, 220.0, 261.63, 329.63], // Fmaj7
+              [164.81, 196.0, 246.94, 293.66], // Em7
+              [146.83, 174.61, 220.0, 261.63], // Dm7
+              [130.81, 164.81, 196.0, 246.94]  // Cmaj7
+            ];
+
+            const melodyNotes = [
+              523.25, 659.25, 587.33, 523.25,
+              493.88, 587.33, 659.25, 783.99,
+              659.25, 587.33, 523.25, 440.0,
+              493.88, 523.25, 587.33, 523.25
+            ];
+
+            const tick = () => {
+              if (!this.isPlaying) return;
+              const beat = this.stepIndex % 16;
+
+              // Play warm chord every 4 beats
+              if (beat % 4 === 0) {
+                const chord = chords[Math.floor(beat / 4) % chords.length];
+                chord.forEach((freq) => {
+                  this.playTone(freq, 2.4, 'sine', 0.022, 0);
+                });
+              }
+
+              // Play soft music-box melody on gentle rhythm
+              const note = melodyNotes[beat];
+              if (note && beat % 2 === 0) {
+                this.playTone(note, 0.55, 'triangle', 0.024, 0.05);
+              } else if (note && beat % 4 === 3) {
+                this.playTone(note * 1.25, 0.4, 'sine', 0.018, 0.02);
+              }
+
+              this.stepIndex++;
+            };
+
+            tick();
+            this.timerId = setInterval(tick, 650);
+          } catch (e) {
+            console.warn('No se pudo iniciar la música:', e);
+          }
+        },
+
+        stopMusic: function () {
+          this.isPlaying = false;
+          if (this.timerId) {
+            clearInterval(this.timerId);
+            this.timerId = null;
+          }
+          this.updateButtonUI();
+        },
+
+        updateButtonUI: function () {
+          const label = document.getElementById('musicStatusText');
+          const btn = document.getElementById('musicToggleBtn');
+          if (!label || !btn) return;
+          if (this.isPlaying) {
+            label.textContent = 'Música: ON';
+            btn.classList.remove('bg-caramelLight');
+            btn.classList.add('bg-mintLight', 'border-mint');
+          } else {
+            label.textContent = 'Música: OFF';
+            btn.classList.add('bg-caramelLight');
+            btn.classList.remove('bg-mintLight', 'border-mint');
+          }
+        }
+      };
+
+      /* =====================================================================
+         3. CANVAS SETUP & 2D TECH-BAKERY KITCHEN RENDERING
+         ===================================================================== */
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+      let canvasWidth = 800;
+      let canvasHeight = 500;
+
+      function resizeCanvas() {
+        if (!canvas || !canvas.parentElement) return;
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvasWidth = Math.max(300, rect.width);
+        canvasHeight = Math.max(300, rect.height);
+        canvas.width = canvasWidth * dpr;
+        canvas.height = canvasHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+
+      function drawRoundedRect(x, y, w, h, r) {
+        const radius = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + w, y, x + w, y + h, radius);
+        ctx.arcTo(x + w, y + h, x, y + h, radius);
+        ctx.arcTo(x, y + h, x, y, radius);
+        ctx.arcTo(x, y, x + w, y, radius);
+        ctx.closePath();
+      }
+
+      function drawKitchenBackground(time) {
+        // 1. Warm Checkered Bakery Floor
+        const tileSize = Math.max(36, Math.min(56, canvasWidth / 18));
+        const wallHeight = canvasHeight * 0.21;
+
+        for (let y = wallHeight; y < canvasHeight; y += tileSize) {
+          for (let x = 0; x < canvasWidth; x += tileSize) {
+            const col = Math.floor(x / tileSize);
+            const row = Math.floor((y - wallHeight) / tileSize);
+            ctx.fillStyle = (col + row) % 2 === 0 ? '#FFF9F2' : '#F6ECE1';
+            ctx.fillRect(x, y, tileSize, tileSize);
+          }
+        }
+
+        // 2. Pastel Kitchen Back Wall & Counters
+        ctx.fillStyle = '#FCEEE3';
+        ctx.fillRect(0, 0, canvasWidth, wallHeight);
+
+        // Backsplash decorative stripe
+        ctx.fillStyle = '#38B2AC';
+        ctx.globalAlpha = 0.16;
+        ctx.fillRect(0, wallHeight - 28, canvasWidth, 28);
+        ctx.globalAlpha = 1;
+
+        // Wall Divider Counter
+        ctx.fillStyle = '#E6CCB2';
+        ctx.fillRect(0, wallHeight - 8, canvasWidth, 12);
+        ctx.fillStyle = '#B08968';
+        ctx.fillRect(0, wallHeight + 4, canvasWidth, 4);
+
+        // Tech Bakery Wall Props: Digital Recipe Monitor & Shelf
+        const monitorW = Math.min(150, canvasWidth * 0.22);
+        const monitorH = Math.min(54, wallHeight * 0.55);
+        const monitorX = canvasWidth * 0.12;
+        const monitorY = wallHeight * 0.22;
+
+        drawRoundedRect(monitorX, monitorY, monitorW, monitorH, 10);
+        ctx.fillStyle = '#2D232E';
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#38B2AC';
+        ctx.stroke();
+
+        ctx.fillStyle = '#38B2AC';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('SYSTEM: BAKERY_OS', monitorX + monitorW / 2, monitorY + monitorH * 0.44);
+        ctx.fillStyle = '#F6AD55';
+        ctx.font = '600 10px Inter, sans-serif';
+        const collectedCount = state.collected.filter(Boolean).length;
+        ctx.fillText(`INGREDIENTES: ${collectedCount}/5`, monitorX + monitorW / 2, monitorY + monitorH * 0.78);
+
+        // Hanging Pastel Pendant Lights
+        [0.36, 0.64].forEach((rx, idx) => {
+          const lx = canvasWidth * rx;
+          ctx.strokeStyle = '#5C4B51';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(lx, 0);
+          ctx.lineTo(lx, wallHeight * 0.35);
+          ctx.stroke();
+
+          ctx.fillStyle = idx === 0 ? '#FF6B8B' : '#F6AD55';
+          ctx.beginPath();
+          ctx.arc(lx, wallHeight * 0.42, 13, Math.PI, 0);
+          ctx.fill();
+
+          ctx.fillStyle = '#FEF3C7';
+          ctx.beginPath();
+          ctx.arc(lx, wallHeight * 0.44, 5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      function drawIngredientPedestals(time) {
+        INGREDIENTS.forEach((ing, idx) => {
+          const px = ing.rx * canvasWidth;
+          const py = ing.ry * canvasHeight;
+          const isCollected = state.collected[idx];
+          const isCurrent = state.currentStep === idx;
+
+          // Pedestal Shadow
+          ctx.fillStyle = 'rgba(45, 35, 46, 0.12)';
+          ctx.beginPath();
+          ctx.ellipse(px, py + 24, 30, 11, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Glowing Aura for Active Step
+          if (isCurrent) {
+            const pulse = 1 + Math.sin(time * 0.006) * 0.14;
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(px, py, 38 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 107, 139, 0.22)';
+            ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = '#FF6B8B';
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          // Pedestal Table Base
+          drawRoundedRect(px - 24, py - 8, 48, 30, 10);
+          ctx.fillStyle = isCollected ? '#E6FFFA' : isCurrent ? '#FFFFFF' : '#F1E5D8';
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = isCollected ? '#38B2AC' : isCurrent ? '#FF6B8B' : '#D5C3B3';
+          ctx.stroke();
+
+          // Ingredient Icon
+          const bob = isCurrent ? Math.sin(time * 0.006) * 4 : 0;
+          ctx.font = '28px serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.globalAlpha = isCollected ? 0.55 : 1;
+          ctx.fillText(ing.icon, px, py - 14 + bob);
+          ctx.globalAlpha = 1;
+
+          // Label Pill below pedestal
+          const labelText = isCollected ? `✓ ${ing.name}` : `${idx + 1}. ${ing.name}`;
+          ctx.font = 'bold 11px Inter, sans-serif';
+          const textW = ctx.measureText(labelText).width + 14;
+          drawRoundedRect(px - textW / 2, py + 26, textW, 20, 8);
+          ctx.fillStyle = isCollected ? '#38B2AC' : isCurrent ? '#FF6B8B' : 'rgba(255,255,255,0.88)';
+          ctx.fill();
+
+          ctx.fillStyle = isCollected || isCurrent ? '#FFFFFF' : '#5C4B51';
+          ctx.fillText(labelText, px, py + 36);
+
+          // Floating Beacon Arrow above current target
+          if (isCurrent && state.started) {
+            const arrowY = py - 48 + Math.sin(time * 0.008) * 5;
+            drawRoundedRect(px - 34, arrowY - 18, 68, 20, 9);
+            ctx.fillStyle = '#2D232E';
+            ctx.fill();
+            ctx.fillStyle = '#FFF9F2';
+            ctx.font = 'bold 10px Inter, sans-serif';
+            ctx.fillText(`Paso ${idx + 1}/5 ▼`, px, arrowY - 8);
+          }
+        });
+      }
+
+      function drawOvenStation(time) {
+        const ox = OVEN_POS.rx * canvasWidth;
+        const oy = OVEN_POS.ry * canvasHeight;
+        const isReady = state.currentStep === 5;
+        const isBaked = state.currentStep === 6;
+
+        // Oven Shadow
+        ctx.fillStyle = 'rgba(45, 35, 46, 0.16)';
+        ctx.beginPath();
+        ctx.ellipse(ox, oy + 42, 46, 14, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ready Glow
+        if (isReady || state.isBaking) {
+          const pulse = 1 + Math.sin(time * 0.008) * 0.12;
+          ctx.beginPath();
+          ctx.arc(ox, oy, 58 * pulse, 0, Math.PI * 2);
+          ctx.fillStyle = state.isBaking ? 'rgba(246, 173, 85, 0.38)' : 'rgba(56, 178, 172, 0.25)';
+          ctx.fill();
+        }
+
+        // Chimney
+        ctx.fillStyle = '#CBD5E1';
+        ctx.fillRect(ox + 16, oy - 62, 12, 22);
+
+        // Main Oven Body
+        drawRoundedRect(ox - 38, oy - 42, 76, 80, 14);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = isReady || isBaked ? '#38B2AC' : '#CBD5E1';
+        ctx.stroke();
+
+        // Digital Top Control Panel
+        drawRoundedRect(ox - 30, oy - 34, 60, 14, 5);
+        ctx.fillStyle = '#2D232E';
+        ctx.fill();
+
+        // Status LEDs
+        ctx.fillStyle = isReady || isBaked ? '#38B2AC' : '#F6AD55';
+        ctx.beginPath();
+        ctx.arc(ox - 18, oy - 27, 3, 0, Math.PI * 2);
+        ctx.arc(ox - 8, oy - 27, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Oven Glass Window
+        drawRoundedRect(ox - 28, oy - 14, 56, 42, 8);
+        ctx.fillStyle = state.isBaking ? '#F6AD55' : isBaked ? '#FF6B8B' : '#334155';
+        ctx.fill();
+
+        // Cake inside window when baking or baked
+        if (state.isBaking || isBaked) {
+          ctx.font = '24px serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('🎂', ox, oy + 8);
+        } else {
+          ctx.fillStyle = 'rgba(255,255,255,0.25)';
+          ctx.font = 'bold 10px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('HORNO', ox, oy + 7);
+        }
+
+        // Label below Oven
+        const ovenLabel = isBaked ? '🎂 ¡Pastel Listo!' : isReady ? '🔥 ¡Hornear!' : '🔒 Horno Tech';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        const lw = ctx.measureText(ovenLabel).width + 16;
+        drawRoundedRect(ox - lw / 2, oy + 44, lw, 22, 9);
+        ctx.fillStyle = isReady || isBaked ? '#38B2AC' : '#5C4B51';
+        ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(ovenLabel, ox, oy + 55);
+
+        // Beacon Arrow when Oven unlocks
+        if (isReady && !state.isBaking) {
+          const by = oy - 68 + Math.sin(time * 0.008) * 5;
+          drawRoundedRect(ox - 58, by - 14, 116, 22, 10);
+          ctx.fillStyle = '#FF6B8B';
+          ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 10px Inter, sans-serif';
+          ctx.fillText('¡Listo para hornear! ▼', ox, by - 3);
+        }
+      }
+
+      function drawPlayerAvatar() {
+        const px = state.player.x * canvasWidth;
+        const py = state.player.y * canvasHeight;
+        const bob = Math.abs(Math.sin(state.player.walkCycle)) * 4;
+
+        ctx.save();
+        ctx.translate(px, py);
+
+        // Floor shadow
+        ctx.fillStyle = 'rgba(45, 35, 46, 0.18)';
+        ctx.beginPath();
+        ctx.ellipse(0, 22, 18, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.translate(0, -bob);
+
+        // Cute Apron Dress Body (Mint & Coral)
+        drawRoundedRect(-14, -4, 28, 24, 9);
+        ctx.fillStyle = '#38B2AC';
+        ctx.fill();
+
+        // White Baker Apron Front
+        drawRoundedRect(-10, 0, 20, 19, 6);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+
+        // Little Heart Badge on Apron
+        ctx.fillStyle = '#FF6B8B';
+        ctx.beginPath();
+        ctx.arc(0, 9, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair Back
+        ctx.fillStyle = '#4A2C2A';
+        ctx.beginPath();
+        ctx.arc(0, -16, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Chibi Head
+        ctx.fillStyle = '#FDE2D2';
+        ctx.beginPath();
+        ctx.arc(0, -15, 13, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair Bangs
+        ctx.fillStyle = '#4A2C2A';
+        ctx.beginPath();
+        ctx.arc(0, -19, 13, Math.PI, 0);
+        ctx.fill();
+
+        // Tech Glasses
+        const dirOffset = state.player.facing * 2;
+        ctx.strokeStyle = '#2D232E';
+        ctx.lineWidth = 1.8;
+        ctx.strokeRect(-9 + dirOffset, -17, 7, 5);
+        ctx.strokeRect(2 + dirOffset, -17, 7, 5);
+        ctx.beginPath();
+        ctx.moveTo(-2 + dirOffset, -15);
+        ctx.lineTo(2 + dirOffset, -15);
+        ctx.stroke();
+
+        // Rosy Cheeks
+        ctx.fillStyle = 'rgba(255, 107, 139, 0.45)';
+        ctx.beginPath();
+        ctx.arc(-7 + dirOffset, -10, 2.2, 0, Math.PI * 2);
+        ctx.arc(7 + dirOffset, -10, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Tall Puffy Chef Hat
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(-6, -33, 7, 0, Math.PI * 2);
+        ctx.arc(6, -33, 7, 0, Math.PI * 2);
+        ctx.arc(0, -36, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        drawRoundedRect(-10, -31, 20, 7, 3);
+        ctx.fillStyle = '#FF6B8B';
+        ctx.fill();
+
+        // Name Tag above Regina
+        ctx.font = 'bold 10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#2D232E';
+        ctx.fillText('Regina', 0, -48);
+
+        ctx.restore();
+      }
+
+      function drawConfetti() {
+        state.confetti.forEach((p) => {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+          ctx.restore();
+        });
+      }
+
+      function spawnConfettiBurst() {
+        const colors = ['#FF6B8B', '#38B2AC', '#F6AD55', '#9F7AEA', '#48BB78'];
+        for (let i = 0; i < 85; i++) {
+          state.confetti.push({
+            x: OVEN_POS.rx * canvasWidth,
+            y: OVEN_POS.ry * canvasHeight - 20,
+            vx: (Math.random() - 0.5) * 9,
+            vy: -Math.random() * 8 - 2,
+            size: Math.random() * 8 + 5,
+            rot: Math.random() * Math.PI * 2,
+            vrot: (Math.random() - 0.5) * 0.2,
+            color: colors[i % colors.length]
+          });
+        }
+      }
+
+      /* =====================================================================
+         4. MOVEMENT, COLLISION & GAME LOOP
+         ===================================================================== */
+      function updateSimulation(dt) {
+        // Update confetti particles
+        state.confetti.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.22; // gravity
+          p.rot += p.vrot;
+        });
+        state.confetti = state.confetti.filter((p) => p.y < canvasHeight + 30);
+
+        // Handle baking cutscene timer
+        if (state.isBaking) {
+          state.bakingAnimTime += dt;
+          if (state.bakingAnimTime > 2100) {
+            state.isBaking = false;
+            state.currentStep = 6;
+            openFinaleModal();
+          }
+          return;
+        }
+
+        // Do not move avatar while a modal is open or before game starts
+        if (!state.started || state.activeModalIndex !== null) return;
+
+        const speed = 0.00038 * dt;
+        let dx = 0;
+        let dy = 0;
+
+        if (state.keys.left || state.dpad.left) dx -= 1;
+        if (state.keys.right || state.dpad.right) dx += 1;
+        if (state.keys.up || state.dpad.up) dy -= 1;
+        if (state.keys.down || state.dpad.down) dy += 1;
+
+        if (dx !== 0 || dy !== 0) {
+          // Manual input overrides auto-walk target
+          state.player.targetX = null;
+          state.player.targetY = null;
+          state.player.autoOpenOnArrive = false;
+
+          const len = Math.hypot(dx, dy);
+          dx /= len;
+          dy /= len;
+
+          state.player.x += dx * speed;
+          state.player.y += dy * speed;
+          if (dx !== 0) state.player.facing = dx > 0 ? 1 : -1;
+          state.player.walkCycle += dt * 0.015;
+        } else if (state.player.targetX !== null && state.player.targetY !== null) {
+          const tdx = state.player.targetX - state.player.x;
+          const tdy = state.player.targetY - state.player.y;
+          const dist = Math.hypot(tdx, tdy);
+
+          if (dist < 0.025) {
+            state.player.x = state.player.targetX;
+            state.player.y = state.player.targetY;
+            state.player.targetX = null;
+            state.player.targetY = null;
+            if (state.player.pendingReviewIdx !== null) {
+              const reviewIdx = state.player.pendingReviewIdx;
+              state.player.pendingReviewIdx = null;
+              state.player.autoOpenOnArrive = false;
+              openStationModal(reviewIdx, true);
+            } else if (state.player.autoOpenOnArrive) {
+              state.player.autoOpenOnArrive = false;
+              checkStationProximity(true);
+            }
+          } else {
+            state.player.x += (tdx / dist) * speed * 1.15;
+            state.player.y += (tdy / dist) * speed * 1.15;
+            if (Math.abs(tdx) > 0.005) state.player.facing = tdx > 0 ? 1 : -1;
+            state.player.walkCycle += dt * 0.015;
+          }
+        }
+
+        // Clamp avatar inside playable kitchen floor
+        state.player.x = Math.max(0.06, Math.min(0.94, state.player.x));
+        state.player.y = Math.max(0.24, Math.min(0.91, state.player.y));
+
+        // Check proximity to active target
+        checkStationProximity(false);
+      }
+
+      function checkStationProximity(forceTrigger) {
+        if (state.currentStep < 5) {
+          const target = INGREDIENTS[state.currentStep];
+          const dist = Math.hypot(
+            (state.player.x - target.rx) * canvasWidth,
+            (state.player.y - target.ry) * canvasHeight
+          );
+          if (forceTrigger || dist < 46) {
+            state.player.targetX = null;
+            state.player.targetY = null;
+            openStationModal(state.currentStep);
+          }
+        } else if (state.currentStep === 5) {
+          const dist = Math.hypot(
+            (state.player.x - OVEN_POS.rx) * canvasWidth,
+            (state.player.y - OVEN_POS.ry) * canvasHeight
+          );
+          if (forceTrigger || dist < 56) {
+            state.player.targetX = null;
+            state.player.targetY = null;
+            startOvenBaking();
+          }
+        }
+      }
+
+      function startOvenBaking() {
+        if (state.isBaking) return;
+        state.isBaking = true;
+        state.bakingAnimTime = 0;
+        audioEngine.playSfx('collect');
+        spawnConfettiBurst();
+        updateHudHint();
+      }
+
+      let lastFrameTime = performance.now();
+      function gameLoop(now) {
+        const dt = Math.min(50, now - lastFrameTime);
+        lastFrameTime = now;
+
+        updateSimulation(dt);
+
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        drawKitchenBackground(now);
+        drawIngredientPedestals(now);
+        drawOvenStation(now);
+        drawPlayerAvatar();
+        drawConfetti();
+
+        requestAnimationFrame(gameLoop);
+      }
+
+      /* =====================================================================
+         5. INPUT HANDLERS (KEYBOARD, CANVAS CLICK/TAP, MOBILE D-PAD)
+         ===================================================================== */
+      window.addEventListener('keydown', (e) => {
+        // If Multi-Wordle is open in Modal 1, route letter typing to active Wordle
+        if (state.activeModalIndex === 1 && !state.minigameSolved) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            window.handleWordleKey('ENTER');
+            return;
+          }
+          if (e.key === 'Backspace') {
+            e.preventDefault();
+            window.handleWordleKey('BACK');
+            return;
+          }
+          if (/^[a-zA-ZñÑ]$/.test(e.key)) {
+            e.preventDefault();
+            window.handleWordleKey(e.key.toUpperCase());
+            return;
+          }
+        }
+
+        if (e.key === 'Escape') {
+          window.closeModal();
+          window.toggleQuickCV(false);
+          return;
+        }
+
+        const k = e.key.toLowerCase();
+        if (k === 'w' || e.key === 'ArrowUp') state.keys.up = true;
+        if (k === 's' || e.key === 'ArrowDown') state.keys.down = true;
+        if (k === 'a' || e.key === 'ArrowLeft') state.keys.left = true;
+        if (k === 'd' || e.key === 'ArrowRight') state.keys.right = true;
+        if ((e.key === 'Enter' || e.key === ' ') && state.started && state.activeModalIndex === null) {
+          checkStationProximity(true);
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        const k = e.key.toLowerCase();
+        if (k === 'w' || e.key === 'ArrowUp') state.keys.up = false;
+        if (k === 's' || e.key === 'ArrowDown') state.keys.down = false;
+        if (k === 'a' || e.key === 'ArrowLeft') state.keys.left = false;
+        if (k === 'd' || e.key === 'ArrowRight') state.keys.right = false;
+      });
+
+      canvas.addEventListener('pointerdown', (e) => {
+        if (!state.started || state.activeModalIndex !== null || state.isBaking) return;
+        const rect = canvas.getBoundingClientRect();
+        const clickX = (e.clientX - rect.left) / rect.width;
+        const clickY = (e.clientY - rect.top) / rect.height;
+
+        // Check if user tapped any unlocked/active ingredient pedestal
+        for (let i = 0; i < INGREDIENTS.length; i++) {
+          const item = INGREDIENTS[i];
+          const dist = Math.hypot((clickX - item.rx) * canvasWidth, (clickY - item.ry) * canvasHeight);
+          if (dist < 58 && (i === state.currentStep || state.collected[i])) {
+            state.player.targetX = item.rx;
+            state.player.targetY = item.ry;
+            state.player.autoOpenOnArrive = true;
+            state.player.pendingReviewIdx = state.collected[i] && i !== state.currentStep ? i : null;
+            audioEngine.playSfx('click');
+            return;
+          }
+        }
+
+        // Check if user tapped the Oven when ready or already baked
+        if (state.currentStep >= 5) {
+          const dist = Math.hypot((clickX - OVEN_POS.rx) * canvasWidth, (clickY - OVEN_POS.ry) * canvasHeight);
+          if (dist < 68) {
+            state.player.targetX = OVEN_POS.rx;
+            state.player.targetY = OVEN_POS.ry;
+            state.player.autoOpenOnArrive = true;
+            state.player.pendingReviewIdx = null;
+            audioEngine.playSfx('click');
+            if (state.currentStep === 6) {
+              openFinaleModal();
+            }
+            return;
+          }
+        }
+
+        // Otherwise walk smoothly to clicked/tapped floor point
+        state.player.targetX = Math.max(0.06, Math.min(0.94, clickX));
+        state.player.targetY = Math.max(0.24, Math.min(0.91, clickY));
+        state.player.autoOpenOnArrive = false;
+        state.player.pendingReviewIdx = null;
+      });
+
+      /* =====================================================================
+         6. CV CONTENT & 5 DISTINCT MINI-GAMES RENDERERS
+         ===================================================================== */
+      function getCVHtmlForStep(stepIdx) {
+        if (stepIdx === 0) {
+          return `
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-mintLight text-mint font-bold text-xs mb-2">
+                🎓 Perfil & Formación Académica
+              </span>
+              <h4 class="font-display text-xl font-bold text-espresso">Regina Gutiérrez Flores</h4>
+              <p class="text-xs font-semibold text-strawberry mb-3">✉️ reginagtzzf@gmail.com</p>
+
+              <p class="text-xs sm:text-sm text-cocoa leading-relaxed bg-vanilla p-3 rounded-xl border border-caramel/30 mb-3">
+                Estudiante con experiencia en <strong>desarrollo de aplicaciones web</strong>, <strong>gestión de proyectos</strong> y <strong>aprendizaje automático</strong>. Apasionada por la innovación tecnológica, con habilidades en programación, bases de datos y diseño 3D.
+              </p>
+
+              <div class="space-y-2.5 text-xs sm:text-sm">
+                <div class="p-3 rounded-xl bg-mintLight/60 border border-mint/30">
+                  <div class="font-bold text-espresso">Universidad del Noreste</div>
+                  <div class="text-cocoa">Ing. en Sistemas Computacionales y Electrónicos</div>
+                  <div class="font-bold text-mint mt-0.5">Promedio: 9.7</div>
+                </div>
+                <div class="p-3 rounded-xl bg-caramelLight/60 border border-caramel/40">
+                  <div class="font-bold text-espresso">Escuela Americana de Tampico</div>
+                  <div class="text-cocoa">Preparatoria</div>
+                  <div class="font-bold text-caramel mt-0.5">Promedio: 9.5</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        if (stepIdx === 1) {
+          const activeExp = multiWordleState.stageIndex;
+          return `
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-strawberry/15 text-strawberryDark font-bold text-xs mb-2">
+                💼 Trayectoria Profesional (3 Experiencias)
+              </span>
+              <h4 class="font-display text-xl font-bold text-espresso mb-3">Experiencia Laboral</h4>
+
+              <div class="space-y-2.5 text-xs sm:text-sm">
+                <div class="p-3 rounded-xl border transition-all ${activeExp === 0 && !state.minigameSolved ? 'bg-caramelLight/60 border-strawberry ring-2 ring-strawberry/25' : 'bg-vanilla border-caramel/30'}">
+                  <div class="flex justify-between items-start gap-2">
+                    <span class="font-bold text-espresso">1. Arantza Joyas</span>
+                    <span class="text-[11px] font-bold text-strawberry">2024 – 2025</span>
+                  </div>
+                  <div class="text-xs font-semibold text-mint mb-1">Asesor de Ventas y Administración • Tampico</div>
+                  <p class="text-xs text-cocoa">Impulsé ventas de alto valor mediante atención personalizada y asesoría en joyería fina; gestioné facturación, administración de ventas y seguimiento contable.</p>
+                </div>
+
+                <div class="p-3 rounded-xl border transition-all ${activeExp === 1 && !state.minigameSolved ? 'bg-caramelLight/60 border-strawberry ring-2 ring-strawberry/25' : 'bg-vanilla border-caramel/30'}">
+                  <div class="flex justify-between items-start gap-2">
+                    <span class="font-bold text-espresso">2. TEC Tampico</span>
+                    <span class="text-[11px] font-bold text-strawberry">2024 – 2025</span>
+                  </div>
+                  <div class="text-xs font-semibold text-mint mb-1">Profesora de Inglés (Secundaria / 6.º a 8.º grado)</div>
+                  <p class="text-xs text-cocoa">Impartí clases enfocadas en fortalecer la expresión y confianza comunicativa con métodos de enseñanza prácticos y accesibles.</p>
+                </div>
+
+                <div class="p-3 rounded-xl border transition-all ${activeExp === 2 && !state.minigameSolved ? 'bg-caramelLight/60 border-strawberry ring-2 ring-strawberry/25' : 'bg-vanilla border-caramel/30'}">
+                  <div class="flex justify-between items-start gap-2">
+                    <span class="font-bold text-espresso">3. Grupo Garel</span>
+                    <span class="text-[11px] font-bold text-strawberry">Veranos 2021 – 2022</span>
+                  </div>
+                  <div class="text-xs font-semibold text-mint mb-1">Auxiliar Administrativo • Tampico</div>
+                  <p class="text-xs text-cocoa">Administré y clasifiqué facturas y documentación financiera por orden cronológico; consolidé montos totales mensuales.</p>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        if (stepIdx === 2) {
+          return `
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-mintLight text-mint font-bold text-xs mb-2">
+                🚀 Innovación & Liderazgo
+              </span>
+              <h4 class="font-display text-xl font-bold text-espresso mb-3">Proyectos Tech & Soft Skills</h4>
+
+              <div class="space-y-2.5 text-xs sm:text-sm">
+                <div class="p-3 rounded-xl bg-mintLight/60 border border-mint/30">
+                  <div class="font-bold text-espresso">📡 Sensor de Humedad y Vibración (Azure y Broker)</div>
+                  <p class="text-xs text-cocoa mt-0.5">Sistema de monitoreo IoT con transmisión de telemetría en tiempo real hacia la nube.</p>
+                </div>
+
+                <div class="p-3 rounded-xl bg-mintLight/60 border border-mint/30">
+                  <div class="font-bold text-espresso">📊 Sistema de Calificaciones</div>
+                  <p class="text-xs text-cocoa mt-0.5">Plataforma estructurada para gestión y consulta de evaluaciones académicas.</p>
+                </div>
+
+                <div class="p-3 rounded-xl bg-caramelLight/60 border border-caramel/40">
+                  <div class="font-bold text-espresso">🌟 Secretaria de National Honor Society (2024)</div>
+                  <p class="text-xs text-cocoa mt-0.5">Miembro activo (2022–2024) y mesa directiva organizando proyectos de servicio y liderazgo.</p>
+                </div>
+
+                <div class="p-3 rounded-xl bg-vanilla border border-caramel/30">
+                  <div class="font-bold text-espresso">⚡ Tutorías de Electrónica UNE</div>
+                  <p class="text-xs text-cocoa mt-0.5">Apoyo académico a compañeros todos los miércoles de 2:00 a 4:00 pm.</p>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        if (stepIdx === 3) {
+          return `
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-caramelLight text-espresso font-bold text-xs mb-2">
+                💻 Idiomas & Stack Tecnológico
+              </span>
+              <h4 class="font-display text-xl font-bold text-espresso mb-2.5">TOEFL iBT & Herramientas</h4>
+
+              <!-- TOEFL Score Card -->
+              <div class="p-3 rounded-xl bg-vanilla border border-caramel/40 mb-3">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-bold text-xs sm:text-sm text-espresso">Inglés TOEFL iBT</span>
+                  <span class="px-2.5 py-0.5 rounded-full bg-mint text-white font-bold text-xs">102 / 120</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <div class="flex justify-between"><span>Reading</span><strong>24/30</strong></div>
+                    <div class="w-full bg-cream h-1.5 rounded-full mt-0.5"><div class="bg-strawberry h-1.5 rounded-full" style="width:80%"></div></div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between"><span>Listening</span><strong>30/30</strong></div>
+                    <div class="w-full bg-cream h-1.5 rounded-full mt-0.5"><div class="bg-mint h-1.5 rounded-full" style="width:100%"></div></div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between"><span>Speaking</span><strong>22/30</strong></div>
+                    <div class="w-full bg-cream h-1.5 rounded-full mt-0.5"><div class="bg-caramel h-1.5 rounded-full" style="width:73%"></div></div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between"><span>Writing</span><strong>26/30</strong></div>
+                    <div class="w-full bg-cream h-1.5 rounded-full mt-0.5"><div class="bg-mint h-1.5 rounded-full" style="width:87%"></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Languages & Tools -->
+              <div class="mb-3">
+                <div class="text-xs font-bold text-espresso mb-1.5">Herramientas y Lenguajes:</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <span class="px-2.5 py-1 rounded-lg bg-mint text-white font-semibold text-xs">Python</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-mint text-white font-semibold text-xs">JavaScript</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-mint text-white font-semibold text-xs">SQL</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-strawberry text-white font-semibold text-xs">SolidWorks</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-mint text-white font-semibold text-xs">Java</span>
+                  <span class="px-2.5 py-1 rounded-lg bg-mint text-white font-semibold text-xs">C#</span>
+                </div>
+              </div>
+
+              <p class="text-xs text-cocoa">
+                <strong>Competencias:</strong> Pensamiento analítico, trabajo en equipo, comunicación, efectividad y responsabilidad.<br />
+                <strong>Intereses:</strong> Administración de Bases de Datos y Diseño Web.
+              </p>
+            </div>
+          `;
+        }
+
+        // stepIdx === 4
+        return `
+          <div>
+            <span class="inline-block px-3 py-1 rounded-full bg-strawberry/15 text-strawberryDark font-bold text-xs mb-2">
+              🏅 Reconocimientos & Formación Continua
+            </span>
+            <h4 class="font-display text-xl font-bold text-espresso mb-3">Certificaciones y Premios</h4>
+
+            <div class="space-y-2.5 text-xs sm:text-sm">
+              <div class="p-3 rounded-xl bg-mintLight/60 border border-mint/30">
+                <div class="font-bold text-espresso">🗄️ Certificados DataCamp</div>
+                <ul class="list-disc list-inside text-xs text-cocoa mt-1 space-y-0.5">
+                  <li>Writing Functions and Stored Procedures in SQL Server</li>
+                  <li>Joining Data in SQL & Intermediate SQL</li>
+                  <li>Database Design</li>
+                  <li><em>En progreso: Cybersecurity</em></li>
+                </ul>
+              </div>
+
+              <div class="p-3 rounded-xl bg-vanilla border border-caramel/30">
+                <div class="font-bold text-espresso">📊 Santander Open Academy</div>
+                <div class="text-xs text-cocoa">Introduction to Data Science</div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-caramelLight/60 border border-caramel/40">
+                <div class="font-bold text-espresso">🎓 AP Scholar Award</div>
+                <div class="text-xs text-cocoa">Passed 3 AP Exams</div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-strawberry/10 border border-strawberry/30">
+                <div class="font-bold text-espresso">🌎 ATSMUN Tampico</div>
+                <div class="text-xs text-cocoa">Outstanding Delegate Award & Best Position Paper Award</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      /* ---------------- MINI-GAME 1: WORD MATCH ---------------- */
+      const wordMatchState = {
+        pairs: [
+          { id: 0, left: 'Universidad del Noreste', right: 'Promedio 9.7 • Ing. Sistemas' },
+          { id: 1, left: 'Escuela Americana de Tampico', right: 'Promedio 9.5 • Preparatoria' },
+          { id: 2, left: 'Especialidad Tech', right: 'Web, Machine Learning y 3D' },
+          { id: 3, left: 'Contacto Directo', right: 'reginagtzzf@gmail.com' }
+        ],
+        rightOrder: [2, 0, 3, 1],
+        selectedLeft: null,
+        matchedIds: []
+      };
+
+      function renderWordMatch() {
+        const container = document.getElementById('modalGameContent');
+        if (!container) return;
+
+        const leftHtml = wordMatchState.pairs
+          .map((p) => {
+            const isMatched = wordMatchState.matchedIds.includes(p.id);
+            const isSelected = wordMatchState.selectedLeft === p.id;
+            let cls = 'bg-white border-caramel/40 hover:border-strawberry text-espresso';
+            if (isMatched) cls = 'bg-mint text-white border-mint cursor-default';
+            else if (isSelected) cls = 'bg-strawberry text-white border-strawberryDark scale-[1.02] shadow-sm';
+
+            return `
+              <button type="button" ${isMatched ? 'disabled' : ''} onclick="window.handleWordMatchLeft(${p.id})"
+                class="touch-target w-full p-2.5 rounded-xl border-2 text-left text-xs font-semibold transition-all ${cls}">
+                ${isMatched ? '✓ ' : ''}${p.left}
+              </button>
+            `;
+          })
+          .join('');
+
+        const rightHtml = wordMatchState.rightOrder
+          .map((pairId) => {
+            const p = wordMatchState.pairs[pairId];
+            const isMatched = wordMatchState.matchedIds.includes(p.id);
+            let cls = 'bg-white border-caramel/40 hover:border-mint text-espresso';
+            if (isMatched) cls = 'bg-mint text-white border-mint cursor-default';
+
+            return `
+              <button type="button" ${isMatched ? 'disabled' : ''} onclick="window.handleWordMatchRight(${p.id})"
+                id="wm-right-${p.id}"
+                class="touch-target w-full p-2.5 rounded-xl border-2 text-left text-xs font-semibold transition-all ${cls}">
+                ${isMatched ? '✓ ' : ''}${p.right}
+              </button>
+            `;
+          })
+          .join('');
+
+        container.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-display font-bold text-base text-espresso">🧩 Minijuego 1: Conecta los Pares</span>
+              <span class="text-xs font-bold text-mint">${wordMatchState.matchedIds.length}/4 Pares</span>
+            </div>
+            <p class="text-xs text-cocoa mb-3">
+              Toca un concepto de la izquierda y conéctalo con su dato correspondiente a la derecha.
+            </p>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div class="space-y-2">${leftHtml}</div>
+              <div class="space-y-2">${rightHtml}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      window.handleWordMatchLeft = function (id) {
+        if (wordMatchState.matchedIds.includes(id)) return;
+        audioEngine.playSfx('click');
+        wordMatchState.selectedLeft = id;
+        renderWordMatch();
+      };
+
+      window.handleWordMatchRight = function (id) {
+        if (wordMatchState.matchedIds.includes(id)) return;
+        if (wordMatchState.selectedLeft === null) {
+          audioEngine.playSfx('error');
+          return;
+        }
+        if (wordMatchState.selectedLeft === id) {
+          wordMatchState.matchedIds.push(id);
+          wordMatchState.selectedLeft = null;
+          audioEngine.playSfx('match');
+          renderWordMatch();
+          if (wordMatchState.matchedIds.length === 4) {
+            markMinigameSolved('🌾 ¡Recoger Harina!');
+          }
+        } else {
+          audioEngine.playSfx('error');
+          const btn = document.getElementById(`wm-right-${id}`);
+          if (btn) btn.classList.add('animate-shake', 'border-red-400');
+          setTimeout(() => {
+            wordMatchState.selectedLeft = null;
+            renderWordMatch();
+          }, 380);
+        }
+      };
+
+      /* ---------------- MINI-GAME 2: 3 MINI WORDLES (1 PER EXPERIENCE) ---------------- */
+      const WORDLE_EXPERIENCES = [
+        {
+          company: 'Arantza Joyas (2024–2025)',
+          role: 'Asesor de Ventas y Administración',
+          target: 'JOYAS',
+          hint: 'Piezas finas de alto valor en las que brindó asesoría personalizada (5 letras).'
+        },
+        {
+          company: 'TEC Tampico (2024–2025)',
+          role: 'Profesora de Inglés (6.° a 8.° grado)',
+          target: 'CLASE',
+          hint: 'Sesión práctica que impartía en secundaria para fortalecer el inglés (5 letras).'
+        },
+        {
+          company: 'Grupo Garel (Veranos 2021–2022)',
+          role: 'Auxiliar Administrativo',
+          target: 'ORDEN',
+          hint: 'Criterio cronológico con el que clasificaba facturas y documentos (5 letras).'
+        }
+      ];
+
+      const multiWordleState = {
+        stageIndex: 0, // 0, 1, 2
+        solvedStages: [false, false, false],
+        guesses: [],
+        currentGuess: '',
+        statusMessage: '',
+        stageTransitioning: false
+      };
+
+      function evaluateWordleGuess(guess, target) {
+        const result = Array(5).fill('absent');
+        const targetChars = target.split('');
+        const used = Array(5).fill(false);
+
+        for (let i = 0; i < 5; i++) {
+          if (guess[i] === targetChars[i]) {
+            result[i] = 'correct';
+            used[i] = true;
+          }
+        }
+        for (let i = 0; i < 5; i++) {
+          if (result[i] === 'correct') continue;
+          const idx = targetChars.findIndex((ch, j) => !used[j] && ch === guess[i]);
+          if (idx !== -1) {
+            result[i] = 'present';
+            used[idx] = true;
+          }
+        }
+        return result;
+      }
+
+      function renderMultiWordle() {
+        const container = document.getElementById('modalGameContent');
+        if (!container) return;
+
+        const stage = WORDLE_EXPERIENCES[multiWordleState.stageIndex];
+        const stageSolved = multiWordleState.solvedStages[multiWordleState.stageIndex];
+
+        // Stage progress badges (Experiencia 1/3, 2/3, 3/3)
+        const stagePillsHtml = WORDLE_EXPERIENCES.map((exp, idx) => {
+          const isDone = multiWordleState.solvedStages[idx];
+          const isCur = idx === multiWordleState.stageIndex;
+          let cls = 'bg-white text-cocoa/60 border-caramel/30';
+          if (isDone) cls = 'bg-mint text-white border-mint';
+          else if (isCur) cls = 'bg-strawberry text-white border-strawberryDark shadow-sm';
+          return `<span class="px-2.5 py-1 rounded-full border text-[11px] font-bold ${cls}">${isDone ? '✓ ' : ''}Exp. ${idx + 1}/3</span>`;
+        }).join('');
+
+        // 4 compact rows per Wordle to fit comfortably on mobile & tablet
+        const maxRows = 4;
+        let rowsHtml = '';
+        for (let r = 0; r < maxRows; r++) {
+          const submitted = multiWordleState.guesses[r];
+          const isCurrent = r === multiWordleState.guesses.length && !stageSolved && !state.minigameSolved;
+          const evalColors = submitted ? evaluateWordleGuess(submitted, stage.target) : null;
+
+          let cellsHtml = '';
+          for (let c = 0; c < 5; c++) {
+            let letter = '';
+            let cls = 'bg-white border-caramel/40 text-espresso';
+            if (submitted) {
+              letter = submitted[c];
+              if (evalColors[c] === 'correct') cls = 'bg-mint border-mint text-white';
+              else if (evalColors[c] === 'present') cls = 'bg-caramel border-caramel text-white';
+              else cls = 'bg-cocoa/70 border-cocoa text-white';
+            } else if (isCurrent) {
+              letter = multiWordleState.currentGuess[c] || '';
+              if (letter) cls = 'bg-white border-strawberry text-espresso scale-105';
+            }
+            cellsHtml += `
+              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border-2 font-display font-bold text-base flex items-center justify-center transition-all ${cls}">
+                ${letter}
+              </div>
+            `;
+          }
+          rowsHtml += `<div class="flex justify-center gap-1.5">${cellsHtml}</div>`;
+        }
+
+        const kbRows = [
+          ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+          ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'],
+          ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACK']
+        ];
+
+        const kbHtml = kbRows
+          .map(
+            (row) => `
+            <div class="flex justify-center gap-1">
+              ${row
+                .map((k) => {
+                  const label = k === 'BACK' ? '⌫' : k === 'ENTER' ? 'OK' : k;
+                  const wide = k === 'ENTER' || k === 'BACK' ? 'px-2.5 text-xs bg-caramelLight' : 'flex-1 max-w-[32px] text-xs bg-white';
+                  return `
+                    <button type="button" onclick="window.handleWordleKey('${k}')"
+                      class="${wide} h-11 rounded-xl hover:bg-caramelLight border border-caramel/40 font-bold text-espresso active:scale-95 flex items-center justify-center">
+                      ${label}
+                    </button>
+                  `;
+                })
+                .join('')}
+            </div>
+          `
+          )
+          .join('');
+
+        container.innerHTML = `
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
+              <span class="font-display font-bold text-base text-espresso">🔤 Wordle Experiencia ${multiWordleState.stageIndex + 1}/3</span>
+              <div class="flex items-center gap-1">${stagePillsHtml}</div>
+            </div>
+
+            <div class="bg-white p-2.5 rounded-xl border border-caramel/30 mb-2 text-xs">
+              <div class="flex items-center justify-between gap-2 mb-0.5">
+                <span class="font-bold text-strawberry">${stage.company}</span>
+                ${
+                  !stageSolved && !state.minigameSolved
+                    ? `<button type="button" onclick="window.revealWordleLetter()" class="px-2 py-1 rounded-lg bg-caramelLight hover:bg-caramel/30 text-espresso font-bold text-[11px] active:scale-95">💡 Revelar Letra</button>`
+                    : ''
+                }
+              </div>
+              <p class="text-cocoa"><strong>Pista:</strong> ${stage.hint}</p>
+            </div>
+
+            ${multiWordleState.statusMessage ? `<p class="text-xs font-bold text-center text-mint mb-1.5">${multiWordleState.statusMessage}</p>` : ''}
+            <div class="space-y-1.5 mb-2.5">${rowsHtml}</div>
+            <div class="space-y-1.5">${kbHtml}</div>
+          </div>
+        `;
+      }
+
+      window.revealWordleLetter = function () {
+        if (state.minigameSolved || multiWordleState.stageTransitioning) return;
+        const target = WORDLE_EXPERIENCES[multiWordleState.stageIndex].target;
+        let nextPrefix = '';
+        for (let i = 0; i < 5; i++) {
+          if (multiWordleState.currentGuess[i] === target[i]) {
+            nextPrefix += target[i];
+          } else {
+            nextPrefix += target[i];
+            break;
+          }
+        }
+        multiWordleState.currentGuess = nextPrefix;
+        audioEngine.playSfx('click');
+        renderMultiWordle();
+      };
+
+      window.handleWordleKey = function (key) {
+        if (state.minigameSolved || multiWordleState.stageTransitioning) return;
+        const stage = WORDLE_EXPERIENCES[multiWordleState.stageIndex];
+
+        if (key === 'BACK') {
+          if (multiWordleState.currentGuess.length > 0) {
+            multiWordleState.currentGuess = multiWordleState.currentGuess.slice(0, -1);
+            audioEngine.playSfx('click');
+            renderMultiWordle();
+          }
+          return;
+        }
+
+        if (key === 'ENTER') {
+          if (multiWordleState.currentGuess.length < 5) {
+            multiWordleState.statusMessage = 'Completa las 5 letras para verificar.';
+            audioEngine.playSfx('error');
+            renderMultiWordle();
+            return;
+          }
+          const guess = multiWordleState.currentGuess;
+          multiWordleState.guesses.push(guess);
+          multiWordleState.currentGuess = '';
+          multiWordleState.statusMessage = '';
+
+          if (guess === stage.target) {
+            multiWordleState.solvedStages[multiWordleState.stageIndex] = true;
+            audioEngine.playSfx('match');
+
+            if (multiWordleState.stageIndex < 2) {
+              multiWordleState.stageTransitioning = true;
+              multiWordleState.statusMessage = `🎉 ¡Correcto (${stage.target})! Cargando experiencia ${multiWordleState.stageIndex + 2}/3...`;
+              renderMultiWordle();
+              // Re-render left CV column to highlight next experience
+              document.getElementById('modalCVContent').innerHTML = getCVHtmlForStep(1);
+              setTimeout(() => {
+                multiWordleState.stageIndex += 1;
+                multiWordleState.guesses = [];
+                multiWordleState.currentGuess = '';
+                multiWordleState.statusMessage = '';
+                multiWordleState.stageTransitioning = false;
+                document.getElementById('modalCVContent').innerHTML = getCVHtmlForStep(1);
+                renderMultiWordle();
+              }, 950);
+            } else {
+              multiWordleState.statusMessage = '🏆 ¡3/3 Experiencias Laborales completadas!';
+              renderMultiWordle();
+              markMinigameSolved('🥚 ¡Recoger Huevos (3/3)!');
+            }
+            return;
+          }
+
+          if (multiWordleState.guesses.length >= 4) {
+            audioEngine.playSfx('error');
+            multiWordleState.guesses = [];
+            multiWordleState.currentGuess = stage.target.slice(0, 2);
+            multiWordleState.statusMessage = `¡Nuevo intento! Te regalamos las primeras 2 letras: ${stage.target.slice(0, 2)}___`;
+            renderMultiWordle();
+            return;
+          }
+
+          audioEngine.playSfx('click');
+          renderMultiWordle();
+          return;
+        }
+
+        if (multiWordleState.currentGuess.length < 5 && /^[A-ZÑ]$/.test(key)) {
+          multiWordleState.currentGuess += key;
+          multiWordleState.statusMessage = '';
+          audioEngine.playSfx('click');
+          renderMultiWordle();
+        }
+      };
+
+      /* ---------------- MINI-GAME 3: COMPLETA LAS FRASES (PROYECTOS & SOFT SKILLS) ---------------- */
+      const sugarBlanksState = {
+        answers: ['AZURE', 'BROKER', 'CALIFICACIONES', 'NATIONAL', 'SERVICIO', 'ELECTRÓNICA'],
+        slots: [null, null, null, null, null, null],
+        activeSlot: 0,
+        bank: ['SERVICIO', 'AZURE', 'ARDUINO', 'CALIFICACIONES', 'ELECTRÓNICA', 'BROKER', 'NATIONAL', 'DISEÑO']
+      };
+
+      function renderSugarFillBlanks() {
+        const container = document.getElementById('modalGameContent');
+        if (!container) return;
+
+        const renderSlot = (idx) => {
+          const val = sugarBlanksState.slots[idx];
+          const isCorrect = val === sugarBlanksState.answers[idx];
+          const isActive = sugarBlanksState.activeSlot === idx && !state.minigameSolved;
+
+          let cls = 'bg-white border-dashed border-strawberry text-strawberry';
+          if (val) {
+            cls = isCorrect
+              ? 'bg-mint border-mint text-white'
+              : 'bg-caramelLight border-caramel text-espresso';
+          } else if (isActive) {
+            cls = 'bg-strawberry/10 border-strawberry text-strawberry ring-2 ring-strawberry/30';
+          }
+
+          return `
+            <button type="button" onclick="window.selectSugarBlank(${idx})"
+              class="inline-flex items-center justify-center min-h-[34px] min-w-[96px] px-2.5 py-0.5 mx-0.5 my-0.5 rounded-lg border-2 font-bold text-xs transition-all ${cls}">
+              ${val || `[ Espacio ${idx + 1} ]`}
+            </button>
+          `;
+        };
+
+        const solvedCount = sugarBlanksState.slots.filter((v, i) => v === sugarBlanksState.answers[i]).length;
+
+        const bankHtml = sugarBlanksState.bank
+          .map((chip) => {
+            const used = sugarBlanksState.slots.includes(chip);
+            return `
+              <button type="button" ${used || state.minigameSolved ? 'disabled' : ''} onclick="window.chooseSugarChip('${chip}')"
+                class="touch-target px-3 py-2 rounded-xl border-2 text-xs font-bold transition-all ${
+                  used
+                    ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed'
+                    : 'bg-white hover:bg-mintLight border-mint/50 text-espresso active:scale-95 shadow-sm'
+                }">
+                ${chip}
+              </button>
+            `;
+          })
+          .join('');
+
+        container.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-display font-bold text-base text-espresso">✍️ Minijuego 3: Completa las Frases</span>
+              <span class="text-xs font-bold text-mint">${solvedCount}/6 Correctos</span>
+            </div>
+            <p class="text-xs text-cocoa mb-2.5">
+              Toca las fichas del banco de palabras para completar lo que hice en mis proyectos y liderazgo (toca un espacio lleno para devolver la ficha).
+            </p>
+
+            <div class="space-y-2 text-xs text-espresso leading-relaxed bg-white p-3 rounded-2xl border border-caramel/30 mb-3">
+              <p>1. Desarrollé un sensor inteligente de humedad y vibración conectado a la nube mediante ${renderSlot(0)} y un ${renderSlot(1)} de mensajería.</p>
+              <p>2. Programé un sistema automatizado de ${renderSlot(2)} para agilizar el registro y la gestión académica.</p>
+              <p>3. Como Secretaria de la ${renderSlot(3)} Honor Society (2022–2024), organicé y creé proyectos de ${renderSlot(4)} comunitario y liderazgo.</p>
+              <p>4. Impartí tutorías semanales de ${renderSlot(5)} en la UNE los miércoles de 2 a 4 pm para apoyar a otros estudiantes.</p>
+            </div>
+
+            <div class="text-xs font-bold text-cocoa mb-1.5">Banco de Palabras:</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${bankHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      window.selectSugarBlank = function (slotIdx) {
+        if (state.minigameSolved) return;
+        audioEngine.playSfx('click');
+        if (sugarBlanksState.slots[slotIdx] !== null) {
+          sugarBlanksState.slots[slotIdx] = null;
+        }
+        sugarBlanksState.activeSlot = slotIdx;
+        renderSugarFillBlanks();
+      };
+
+      window.chooseSugarChip = function (chip) {
+        if (state.minigameSolved) return;
+        let targetIdx = sugarBlanksState.activeSlot;
+        if (sugarBlanksState.slots[targetIdx] !== null) {
+          const firstEmpty = sugarBlanksState.slots.indexOf(null);
+          if (firstEmpty !== -1) targetIdx = firstEmpty;
+        }
+
+        sugarBlanksState.slots[targetIdx] = chip;
+        const nextEmpty = sugarBlanksState.slots.indexOf(null);
+        if (nextEmpty !== -1) sugarBlanksState.activeSlot = nextEmpty;
+
+        const allCorrect = sugarBlanksState.slots.every((s, idx) => s === sugarBlanksState.answers[idx]);
+        if (allCorrect) {
+          audioEngine.playSfx('match');
+          renderSugarFillBlanks();
+          markMinigameSolved('🍯 ¡Recoger Azúcar y Esencia!');
+        } else if (chip === sugarBlanksState.answers[targetIdx]) {
+          audioEngine.playSfx('click');
+          renderSugarFillBlanks();
+        } else {
+          audioEngine.playSfx('error');
+          renderSugarFillBlanks();
+        }
+      };
+
+      /* ---------------- MINI-GAME 4: DESAFÍO RELÁMPAGO (TOEFL & STACK TECH) ---------------- */
+      const LIGHTNING_QUESTIONS = [
+        {
+          question: '¿Cuál fue el puntaje total y la sección con calificación perfecta (30/30) de Regina en el TOEFL iBT?',
+          options: [
+            '102 / 120 en total y Listening con 30/30',
+            '96 / 120 en total y Speaking con 30/30',
+            '102 / 120 en total y Reading con 30/30'
+          ],
+          correctIdx: 0
+        },
+        {
+          question: 'Además de programar en Python, JavaScript, SQL, Java y C#, ¿qué software de diseño 3D maneja?',
+          options: [
+            'AutoCAD Architecture',
+            'SolidWorks',
+            'Adobe After Effects'
+          ],
+          correctIdx: 1
+        },
+        {
+          question: '¿Cuáles son dos de sus principales áreas de interés tecnológico?',
+          options: [
+            'Soporte de Redes y Reparación Móvil',
+            'Edición Multimedia y Marketing Digital',
+            'Administración de Bases de Datos y Diseño Web'
+          ],
+          correctIdx: 2
+        }
+      ];
+
+      const lightningQuizState = {
+        qIndex: 0,
+        feedback: ''
+      };
+
+      function renderLightningQuiz() {
+        const container = document.getElementById('modalGameContent');
+        if (!container) return;
+
+        const qObj = LIGHTNING_QUESTIONS[lightningQuizState.qIndex];
+        const optionsHtml = qObj.options
+          .map(
+            (opt, idx) => `
+            <button type="button" ${state.minigameSolved ? 'disabled' : ''} onclick="window.answerLightningQuiz(${idx})"
+              class="touch-target w-full p-3 rounded-xl border-2 text-left text-xs sm:text-sm font-semibold transition-all active:scale-98 ${
+                state.minigameSolved && idx === qObj.correctIdx
+                  ? 'bg-mint text-white border-mint'
+                  : 'bg-white hover:bg-mintLight border-caramel/40 hover:border-mint text-espresso shadow-sm'
+              }">
+              <span class="inline-block w-6 h-6 rounded-full bg-cream text-espresso text-center leading-6 font-bold text-xs mr-2">${String.fromCharCode(65 + idx)}</span>
+              ${opt}
+            </button>
+          `
+          )
+          .join('');
+
+        container.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-display font-bold text-base text-espresso">⚡ Minijuego 4: Desafío Relámpago</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-mint text-white text-xs font-bold">Pregunta ${lightningQuizState.qIndex + 1}/3</span>
+            </div>
+            <p class="text-xs text-cocoa mb-3">
+              Responde estas 3 preguntas rápidas sobre su perfil técnico e idiomas para desbloquear la leche y mantequilla.
+            </p>
+
+            <div class="bg-white p-3.5 rounded-2xl border border-caramel/30 mb-3">
+              <p class="font-bold text-xs sm:text-sm text-espresso leading-snug">${qObj.question}</p>
+            </div>
+
+            ${lightningQuizState.feedback ? `<p class="text-xs font-bold text-center text-strawberry mb-2">${lightningQuizState.feedback}</p>` : ''}
+
+            <div class="space-y-2">
+              ${optionsHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      window.answerLightningQuiz = function (chosenIdx) {
+        if (state.minigameSolved) return;
+        const qObj = LIGHTNING_QUESTIONS[lightningQuizState.qIndex];
+
+        if (chosenIdx === qObj.correctIdx) {
+          audioEngine.playSfx('match');
+          lightningQuizState.feedback = '';
+          if (lightningQuizState.qIndex < LIGHTNING_QUESTIONS.length - 1) {
+            lightningQuizState.qIndex += 1;
+            renderLightningQuiz();
+          } else {
+            renderLightningQuiz();
+            markMinigameSolved('🧈 ¡Recoger Leche y Mantequilla!');
+          }
+        } else {
+          audioEngine.playSfx('error');
+          lightningQuizState.feedback = '¡Casi! Revisa la tarjeta de TOEFL y herramientas a la izquierda e intenta de nuevo.';
+          renderLightningQuiz();
+        }
+      };
+
+      /* ---------------- MINI-GAME 5: MEMORY FLIP ---------------- */
+      const memoryState = {
+        cards: [],
+        flippedIndices: [],
+        matchedPairs: [],
+        lockBoard: false
+      };
+
+      function initMemoryFlip() {
+        const deck = [
+          { pairId: 'A', text: '🗄️ DataCamp SQL' },
+          { pairId: 'A', text: '4 Certificados SQL + Data Science' },
+          { pairId: 'B', text: '🏅 AP Scholar Award' },
+          { pairId: 'B', text: '3 Exámenes AP Aprobados' },
+          { pairId: 'C', text: '🌎 ATSMUN Tampico' },
+          { pairId: 'C', text: 'Outstanding Delegate & Best Paper' }
+        ];
+        // Deterministic pleasant shuffle
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+        memoryState.cards = deck;
+        memoryState.flippedIndices = [];
+        memoryState.matchedPairs = [];
+        memoryState.lockBoard = false;
+      }
+
+      function renderMemoryFlip() {
+        const container = document.getElementById('modalGameContent');
+        if (!container) return;
+
+        const cardsHtml = memoryState.cards
+          .map((card, idx) => {
+            const isMatched = memoryState.matchedPairs.includes(card.pairId);
+            const isFlipped = memoryState.flippedIndices.includes(idx) || isMatched;
+
+            return `
+              <div onclick="window.flipMemoryCard(${idx})" class="flip-card cursor-pointer ${isFlipped ? 'flipped' : ''} ${isMatched ? 'matched' : ''}">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front bg-gradient-to-br from-strawberry to-strawberryDark text-white border-2 border-white shadow-sm">
+                    <span class="text-2xl">🧁</span>
+                  </div>
+                  <div class="flip-card-back ${isMatched ? 'bg-mint text-white border-mint' : 'bg-white text-espresso border-caramel'} border-2 shadow-sm text-xs font-bold leading-snug">
+                    ${card.text}
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join('');
+
+        container.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-display font-bold text-base text-espresso">🃏 Minijuego 5: Memorama de Logros</span>
+              <span class="text-xs font-bold text-mint">${memoryState.matchedPairs.length}/3 Pares</span>
+            </div>
+            <p class="text-xs text-cocoa mb-3">
+              Voltea las cartas y encuentra los <strong>3 pares</strong> de certificaciones y premios.
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              ${cardsHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      window.flipMemoryCard = function (idx) {
+        if (state.minigameSolved || memoryState.lockBoard) return;
+        const card = memoryState.cards[idx];
+        if (!card || memoryState.matchedPairs.includes(card.pairId) || memoryState.flippedIndices.includes(idx)) return;
+
+        audioEngine.playSfx('click');
+        memoryState.flippedIndices.push(idx);
+        renderMemoryFlip();
+
+        if (memoryState.flippedIndices.length === 2) {
+          const [i1, i2] = memoryState.flippedIndices;
+          const c1 = memoryState.cards[i1];
+          const c2 = memoryState.cards[i2];
+
+          if (c1.pairId === c2.pairId) {
+            memoryState.matchedPairs.push(c1.pairId);
+            memoryState.flippedIndices = [];
+            audioEngine.playSfx('match');
+            renderMemoryFlip();
+
+            if (memoryState.matchedPairs.length === 3) {
+              markMinigameSolved('🍒 ¡Recoger Cereza!');
+            }
+          } else {
+            memoryState.lockBoard = true;
+            audioEngine.playSfx('error');
+            setTimeout(() => {
+              memoryState.flippedIndices = [];
+              memoryState.lockBoard = false;
+              renderMemoryFlip();
+            }, 780);
+          }
+        }
+      };
+
+      /* =====================================================================
+         7. MODAL MANAGEMENT & PROGRESSION HELPERS
+         ===================================================================== */
+      function markMinigameSolved(buttonLabel) {
+        state.minigameSolved = true;
+        const btn = document.getElementById('collectIngredientBtn');
+        const txt = document.getElementById('collectBtnText');
+        if (!btn || !txt) return;
+
+        btn.disabled = false;
+        btn.className =
+          'w-full py-3 px-4 rounded-2xl font-display text-base sm:text-lg font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-mint to-teal-600 hover:brightness-105 text-white shadow-lg cursor-pointer animate-pop';
+        txt.textContent = buttonLabel;
+      }
+
+      function openStationModal(stepIdx, reviewOnly) {
+        const ing = INGREDIENTS[stepIdx];
+        if (!ing) return;
+
+        state.activeModalIndex = stepIdx;
+        state.minigameSolved = Boolean(reviewOnly || state.collected[stepIdx]);
+
+        document.getElementById('modalIcon').textContent = ing.icon;
+        document.getElementById('modalStepTag').textContent = `Ingrediente ${stepIdx + 1} de 5`;
+        document.getElementById('modalTitle').textContent = ing.fullName;
+        document.getElementById('modalCVContent').innerHTML = getCVHtmlForStep(stepIdx);
+
+        // Reset & render the specific mini-game for this step
+        if (stepIdx === 0) {
+          wordMatchState.selectedLeft = null;
+          wordMatchState.matchedIds = state.minigameSolved ? [0, 1, 2, 3] : [];
+          renderWordMatch();
+        } else if (stepIdx === 1) {
+          multiWordleState.stageIndex = 0;
+          multiWordleState.solvedStages = state.minigameSolved ? [true, true, true] : [false, false, false];
+          multiWordleState.guesses = state.minigameSolved ? ['JOYAS'] : [];
+          multiWordleState.currentGuess = '';
+          multiWordleState.statusMessage = state.minigameSolved ? '✓ 3/3 Experiencias completadas' : '';
+          multiWordleState.stageTransitioning = false;
+          document.getElementById('modalCVContent').innerHTML = getCVHtmlForStep(1);
+          renderMultiWordle();
+        } else if (stepIdx === 2) {
+          sugarBlanksState.slots = state.minigameSolved
+            ? ['AZURE', 'BROKER', 'CALIFICACIONES', 'NATIONAL', 'SERVICIO', 'ELECTRÓNICA']
+            : [null, null, null, null, null, null];
+          sugarBlanksState.activeSlot = 0;
+          renderSugarFillBlanks();
+        } else if (stepIdx === 3) {
+          lightningQuizState.qIndex = state.minigameSolved ? 2 : 0;
+          lightningQuizState.feedback = '';
+          renderLightningQuiz();
+        } else if (stepIdx === 4) {
+          if (memoryState.cards.length === 0) initMemoryFlip();
+          if (state.minigameSolved) {
+            memoryState.matchedPairs = ['A', 'B', 'C'];
+          } else {
+            initMemoryFlip();
+          }
+          renderMemoryFlip();
+        }
+
+        const btn = document.getElementById('collectIngredientBtn');
+        const txt = document.getElementById('collectBtnText');
+        if (state.collected[stepIdx]) {
+          btn.disabled = false;
+          btn.className =
+            'touch-target w-full py-3 px-4 rounded-2xl font-display text-base sm:text-lg font-bold transition-all flex items-center justify-center gap-2 bg-mint text-white cursor-pointer';
+          txt.textContent = '✓ Ingrediente Recolectado (Continuar)';
+        } else {
+          btn.disabled = true;
+          btn.className =
+            'touch-target w-full py-3 px-4 rounded-2xl font-display text-base sm:text-lg font-bold transition-all flex items-center justify-center gap-2 bg-gray-300 text-gray-500 cursor-not-allowed';
+          txt.textContent = '🔒 Completa el minijuego para recoger';
+        }
+
+        document.getElementById('stationModal').classList.remove('hidden');
+      }
+
+      window.collectCurrentIngredient = function () {
+        const idx = state.activeModalIndex;
+        if (idx === null || !state.minigameSolved) return;
+
+        if (!state.collected[idx]) {
+          state.collected[idx] = true;
+          audioEngine.playSfx('collect');
+          if (state.currentStep === idx) {
+            state.currentStep = idx + 1;
+          }
+          updateTopIngredientSlots();
+          updateHudHint();
+        }
+
+        window.closeModal();
+      };
+
+      function updateTopIngredientSlots() {
+        INGREDIENTS.forEach((ing, idx) => {
+          const slot = document.getElementById(`slot-${idx}`);
+          if (!slot) return;
+          if (state.collected[idx]) {
+            slot.className =
+              'flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-bold transition-all bg-mint text-white border border-mint shadow-sm cursor-pointer';
+          } else if (state.currentStep === idx) {
+            slot.className =
+              'flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-bold transition-all bg-strawberry/15 text-strawberryDark border border-strawberry';
+          } else {
+            slot.className =
+              'flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold transition-all bg-white/60 text-cocoa/60 border border-dashed border-cocoa/25';
+          }
+        });
+      }
+
+      function updateHudHint() {
+        const banner = document.getElementById('hudHintBanner');
+        const icon = document.getElementById('hudHintIcon');
+        const text = document.getElementById('hudHintText');
+        if (!banner || !icon || !text) return;
+
+        if (!state.started) {
+          banner.classList.add('hidden');
+          return;
+        }
+        banner.classList.remove('hidden');
+
+        if (state.currentStep < 5) {
+          const cur = INGREDIENTS[state.currentStep];
+          icon.textContent = cur.icon;
+          text.textContent = `Paso ${state.currentStep + 1}/5: Acércate o haz clic en ${cur.name}`;
+        } else if (state.currentStep === 5) {
+          icon.textContent = '🔥';
+          text.textContent = '¡5/5 Ingredientes listos! Ve o haz clic en el Horno Tech';
+        } else {
+          icon.textContent = '🎂';
+          text.textContent = '¡Pastel horneado! Gracias por visitar Regina\'s Tech Bakery';
+        }
+      }
+
+      function openFinaleModal() {
+        updateHudHint();
+        document.getElementById('finaleModal').classList.remove('hidden');
+      }
+
+      /* =====================================================================
+         8. EXPLICIT GLOBAL WINDOW FUNCTIONS (ZERO UNDEFINED ERRORS)
+         ===================================================================== */
+      window.startGame = function () {
+        try {
+          state.started = true;
+          const overlay = document.getElementById('welcomeOverlay');
+          if (overlay) overlay.classList.add('hidden');
+
+          const mobilePad = document.getElementById('mobileControls');
+          const isTouchOrCompact = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth <= 1024;
+          if (mobilePad && isTouchOrCompact) {
+            mobilePad.classList.remove('hidden');
+          }
+
+          updateTopIngredientSlots();
+          updateHudHint();
+
+          // Start calm cheerful lo-fi background music
+          audioEngine.startMusic();
+        } catch (err) {
+          console.error('Error al iniciar el juego:', err);
+        }
+      };
+
+      window.toggleMusic = function () {
+        if (audioEngine.isPlaying) {
+          audioEngine.stopMusic();
+        } else {
+          audioEngine.startMusic();
+        }
+      };
+
+      window.toggleQuickCV = function (show) {
+        const modal = document.getElementById('quickCVModal');
+        if (!modal) return;
+        audioEngine.playSfx('click');
+        if (show) {
+          modal.classList.remove('hidden');
+        } else {
+          modal.classList.add('hidden');
+        }
+      };
+
+      window.closeModal = function () {
+        state.activeModalIndex = null;
+        const modal = document.getElementById('stationModal');
+        if (modal) modal.classList.add('hidden');
+      };
+
+      window.inspectCollectedIngredient = function (idx) {
+        if (state.collected[idx]) {
+          audioEngine.playSfx('click');
+          openStationModal(idx, true);
+        }
+      };
+
+      window.setDpad = function (dir, pressed) {
+        state.dpad[dir] = pressed;
+      };
+
+      window.triggerInteract = function () {
+        if (state.started && state.activeModalIndex === null) {
+          checkStationProximity(true);
+        }
+      };
+
+      function copyTextReliable(text) {
+        try {
+          const tempInput = document.createElement('textarea');
+          tempInput.value = text;
+          tempInput.style.position = 'fixed';
+          tempInput.style.opacity = '0';
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+        } catch (e) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).catch(() => {});
+          }
+        }
+      }
+
+      window.copyEmail = function () {
+        copyTextReliable('reginagtzzf@gmail.com');
+        audioEngine.playSfx('match');
+        const icon = document.getElementById('copyEmailIcon');
+        const label = document.getElementById('copyEmailLabel');
+        if (icon) icon.textContent = '✅';
+        if (label) label.textContent = '¡Correo copiado! reginagtzzf@gmail.com';
+        setTimeout(() => {
+          if (icon) icon.textContent = '📋';
+          if (label) label.textContent = 'Copiar Correo: reginagtzzf@gmail.com';
+        }, 2800);
+      };
+
+      window.copyEmailQuick = function () {
+        copyTextReliable('reginagtzzf@gmail.com');
+        audioEngine.playSfx('match');
+        const btn = document.getElementById('quickCopyBtn');
+        if (btn) {
+          btn.textContent = '✅ ¡Copiado!';
+          setTimeout(() => {
+            btn.textContent = '📋 Copiar Correo';
+          }, 2200);
+        }
+      };
+
+      window.printQuickCV = function () {
+        audioEngine.playSfx('click');
+        window.print();
+      };
+
+      window.closeFinaleAndOpenCV = function () {
+        document.getElementById('finaleModal').classList.add('hidden');
+        window.toggleQuickCV(true);
+      };
+
+      window.resetGame = function () {
+        state.currentStep = 0;
+        state.collected = [false, false, false, false, false];
+        state.activeModalIndex = null;
+        state.minigameSolved = false;
+        state.isBaking = false;
+        state.bakingAnimTime = 0;
+        state.confetti = [];
+        state.player.x = 0.14;
+        state.player.y = 0.56;
+        state.player.targetX = null;
+        state.player.targetY = null;
+        state.player.autoOpenOnArrive = false;
+        state.player.pendingReviewIdx = null;
+
+        // Reset all 5 mini-game states cleanly
+        wordMatchState.selectedLeft = null;
+        wordMatchState.matchedIds = [];
+        multiWordleState.stageIndex = 0;
+        multiWordleState.solvedStages = [false, false, false];
+        multiWordleState.guesses = [];
+        multiWordleState.currentGuess = '';
+        multiWordleState.statusMessage = '';
+        multiWordleState.stageTransitioning = false;
+        sugarBlanksState.slots = [null, null, null, null, null, null];
+        sugarBlanksState.activeSlot = 0;
+        lightningQuizState.qIndex = 0;
+        lightningQuizState.feedback = '';
+        initMemoryFlip();
+
+        document.getElementById('finaleModal').classList.add('hidden');
+        document.getElementById('stationModal').classList.add('hidden');
+        updateTopIngredientSlots();
+        updateHudHint();
+        audioEngine.playSfx('click');
+      };
+
+      /* =====================================================================
+         9. INITIALIZE CANVAS & START RENDER LOOP ON WINDOW LOAD
+         ===================================================================== */
+      resizeCanvas();
+      updateTopIngredientSlots();
+
+      window.addEventListener('load', function () {
+        resizeCanvas();
+        if (!state.loopRunning) {
+          state.loopRunning = true;
+          lastFrameTime = performance.now();
+          requestAnimationFrame(gameLoop);
+        }
+      });
+
+      // Fallback immediate start in case load already fired
+      if (document.readyState === 'complete' && !state.loopRunning) {
+        state.loopRunning = true;
+        lastFrameTime = performance.now();
+        requestAnimationFrame(gameLoop);
+      }
+    })();
+  </script>
+</body>
+</html>
